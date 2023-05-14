@@ -3,7 +3,7 @@
 	import * as d3 from 'd3';
 	import * as turf from '@turf/turf';
   import { onMount } from 'svelte';
-	import { draw } from 'svelte/transition';
+	import * as rewind from '@mapbox/geojson-rewind';
 
 	// importing data
 
@@ -66,6 +66,9 @@
 		let path2 = d3.geoPath()
 			.projection(projection);
 
+		let path3 = d3.geoPath()
+			.projection(projection);
+
   	svg = d3.select(map)
       .append("svg")
 			//.attr("preserveAspectRatio", "xMinYMin meet")
@@ -100,17 +103,17 @@
 			.style("fill", "#000");
 
 		library_buffer = turf.buffer(libraries_geojson, 1, { units: 'miles' });
-
-		console.log(library_buffer)
+		let rewound_buffer = rewind(library_buffer, true);
 
 		svg.selectAll(".buffer")
-      .data(library_buffer.features)
-      .enter().append("path")
+      .data(rewound_buffer.features)
+      .enter()
+			.append("path")
       .attr("class", "buffer")
-      .attr("d", path)
+      .attr("d", path3)
       .style("stroke", "#000")
       .style("stroke-width", 1.3)
-      .style("fill", "none")
+      .style("fill", "#000")
 			.style("fill-opacity", "20%");
 
 	});
