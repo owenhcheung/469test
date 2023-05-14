@@ -2,7 +2,7 @@
 <script>
 	import * as d3 from 'd3';
   import { onMount } from 'svelte';
-	import { geoPath, geoAlbersUsa } from 'd3-geo';
+	import { draw } from 'svelte/transition';
 
 	// importing data
 
@@ -13,46 +13,67 @@
 	import counties_raw from '../data/wa_counties.geojson?raw';
 	//console.log(counties_raw);	
 
-	let censustracts = JSON.parse(counties_raw);
+	let censustracts = JSON.parse(censustracts_raw);
+	let counties = JSON.parse(counties_raw);
+	//console.log(counties);
+	counties.features = counties.features.filter(d => (d.properties.County == "King County" || d.properties.County == "Pierce County"))
+	//console.log(kingpierce)
+	//let newcounties = {...counties, features: kingpierce}
+	//console.log(newcounties)
 
 	let map
 	let svg;
 	let w;
 	let h;
+	let projection;
 
-	let projection = d3.geoMercator()
-			.fitSize([w, h], censustracts);
+	$: onScreenChange(w,h)
 
-	$: init(w,h)
-
-	function init(width, height) {
+	function onScreenChange(width, height) {
 		svg = d3.select(map)
-      //.append("svg")
       .attr("width", width)
       .attr("height", height);
 
 		projection = d3.geoMercator()
-			.fitSize([w, h], censustracts);
+			.fitSize([width - 150, height], counties);
 
+		console.log(w, h);
 	}
 
 	onMount(() => {
 		projection = d3.geoMercator()
-			.fitSize([w, h], censustracts);
+			.fitSize([w - 150, h], counties);
 
 		let path = d3.geoPath()
+			.projection(projection);
+		let path2 = d3.geoPath()
 			.projection(projection);
 
   	svg = d3.select(map)
       .append("svg")
+			//.attr("preserveAspectRatio", "xMinYMin meet")
       .attr("width", w)
       .attr("height", h);
+
+			svg.selectAll("path")
+			.data(counties.features)
+			.enter()
+			.append("path")
+			.attr("d", path)
+			.style("fill", "transparent")
+			.style("stroke", "#000")
+			.attr("stroke-width", 1.3)
 
 		svg.selectAll("path")
 			.data(censustracts.features)
 			.enter()
 			.append("path")
-			.attr("d", path);
+			.attr("d", path2)
+			.style("fill", "transparent")
+			.attr("stroke-width", 1.3)
+			.style("opacity", 0.1)
+  		.style("stroke", "#000");
+
 	});
 
 </script>
@@ -69,3 +90,20 @@
     </div>
   </div>
 </div>
+
+<style>
+	.svg-container {
+		display: inline-block;
+		position: relative;
+		width: 100%;
+		padding-bottom: 100%; /* aspect ratio */
+		vertical-align: top;
+		overflow: hidden;
+	}
+	.svg-content-responsive {
+		display: inline-block;
+		position: absolute;
+		top: 10px;
+		left: 0;
+	}
+</style>
