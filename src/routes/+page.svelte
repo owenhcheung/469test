@@ -1,6 +1,7 @@
 
 <script>
 	import * as d3 from 'd3';
+	import * as turf from '@turf/turf';
   import { onMount } from 'svelte';
 	import { draw } from 'svelte/transition';
 
@@ -26,6 +27,22 @@
 	let w;
 	let h;
 	let projection;
+	let library_buffer;
+
+	let libraries_geojson = { type: "FeatureCollection", features: [] };
+  libraries.forEach(function(d) {
+    let feature = {
+      type: "Feature",
+        properties: d,
+        geometry: {
+          type: "Point",
+          coordinates: [parseFloat(d.Long), parseFloat(d.Lat)]
+        }
+      };
+			libraries_geojson.features.push(feature);
+  });
+
+	//console.log(libraries_geojson)
 
 	$: onScreenChange(w,h)
 
@@ -37,7 +54,7 @@
 		projection = d3.geoMercator()
 			.fitSize([width - 150, height], counties);
 
-		console.log(w, h);
+		//console.log(w, h);
 	}
 
 	onMount(() => {
@@ -53,14 +70,14 @@
       .append("svg")
 			//.attr("preserveAspectRatio", "xMinYMin meet")
       .attr("width", w)
-      .attr("height", h);
+      .attr("height", h)
 
-			svg.selectAll("path")
+		svg.selectAll("path")
 			.data(counties.features)
 			.enter()
 			.append("path")
 			.attr("d", path)
-			.style("fill", "transparent")
+			.style("fill", "none")
 			.style("stroke", "#000")
 			.attr("stroke-width", 1.3)
 
@@ -69,10 +86,32 @@
 			.enter()
 			.append("path")
 			.attr("d", path2)
-			.style("fill", "transparent")
+			.style("fill", "none")
 			.attr("stroke-width", 1.3)
 			.style("opacity", 0.1)
   		.style("stroke", "#000");
+
+		svg.selectAll("circle")
+			.data(libraries)
+			.enter().append("circle")
+			.attr("cx", function(d) { return projection([d.Long, d.Lat])[0]; })
+			.attr("cy", function(d) { return projection([d.Long, d.Lat])[1]; })
+			.attr("r", 3)
+			.style("fill", "#000");
+
+		library_buffer = turf.buffer(libraries_geojson, 1, { units: 'miles' });
+
+		console.log(library_buffer)
+
+		svg.selectAll(".buffer")
+      .data(library_buffer.features)
+      .enter().append("path")
+      .attr("class", "buffer")
+      .attr("d", path)
+      .style("stroke", "#000")
+      .style("stroke-width", 1.3)
+      .style("fill", "none")
+			.style("fill-opacity", "20%");
 
 	});
 
@@ -86,12 +125,14 @@
     <div>
       <h2 class="text-4xl font-bold mb-4">An Understanding of the Digital Access Divide Outside of Seattle</h2>
       <p class="text-lg pb-10">by Owen Cheung, Shirley Hu, Truong Le, Jason Lim</p>
-      <p class="text-lg">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+      <p class="text-lg">
+				How well does the public library system serve households with limited broadband access?
+			</p>
     </div>
   </div>
 </div>
 
-<style>
+<!-- <style>
 	.svg-container {
 		display: inline-block;
 		position: relative;
@@ -106,4 +147,4 @@
 		top: 10px;
 		left: 0;
 	}
-</style>
+</style> -->
