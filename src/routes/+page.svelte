@@ -3,6 +3,7 @@
 	import * as turf from "@turf/turf";
 	import { onMount } from "svelte";
 	import * as rewind from "@mapbox/geojson-rewind";
+	import Slider from "@bulatdashiev/svelte-slider";
 
 	import libraries from "../data/kingpierce_libraries.csv";
 	import censustracts_raw from "../data/wa_censustracts_edit.geojson?raw";
@@ -25,13 +26,18 @@
 	let projection;
 	let library_buffer;
 
+	let value = 1;
+
 	const library_convert = libraries.map((feature) => {
 		return {
 			type: "Feature",
 			properties: feature,
 			geometry: {
 				type: "Point",
-				coordinates: [parseFloat(feature.Long), parseFloat(feature.Lat)],
+				coordinates: [
+					parseFloat(feature.Long),
+					parseFloat(feature.Lat),
+				],
 			},
 		};
 	});
@@ -51,8 +57,7 @@
 			.attr("width", w)
 			.attr("height", h);
 
-		svg
-			.selectAll("path")
+		svg.selectAll("path")
 			.data(counties.features)
 			.enter()
 			.append("path")
@@ -61,9 +66,10 @@
 			.style("stroke", "#000")
 			.attr("stroke-width", 1.3);
 
-		svg
-			.selectAll("path")
-			.data(censustracts.features)
+		const rewound_ct = rewind(censustracts, true);
+
+		svg.selectAll("path")
+			.data(rewound_ct.features)
 			.enter()
 			.append("path")
 			.attr("d", path)
@@ -72,11 +78,12 @@
 			.style("opacity", 0.1)
 			.style("stroke", "#000");
 
-		library_buffer = turf.buffer(libraries_geojson, 1, { units: "miles" });
+		library_buffer = turf.buffer(libraries_geojson, value, {
+			units: "miles",
+		});
 		const rewound_buffer = rewind(library_buffer, true);
 
-		svg
-			.selectAll(".buffer")
+		svg.selectAll(".buffer")
 			.data(rewound_buffer.features)
 			.enter()
 			.append("path")
@@ -87,8 +94,7 @@
 			.style("fill", "#fc8421")
 			.style("fill-opacity", "20%");
 
-		svg
-			.selectAll("circle")
+		svg.selectAll("circle")
 			.data(libraries)
 			.enter()
 			.append("circle")
@@ -116,10 +122,27 @@
 			<p class="text-lg pb-10">
 				by Owen Cheung, Shirley Hu, Truong Le, Jason Lim
 			</p>
-			<p class="text-lg">
-				How well does the public library system serve households with limited
-				broadband access?
+			<p class="text-lg pb-10">
+				How well does the public library system serve households with
+				limited broadband access within a
+				<span class="">{value} mile</span>
+				radius?
 			</p>
+			<input
+				id="buffer-radius"
+				type="range"
+				min="1"
+				max="5"
+				bind:value
+				class="w-4/5 h-2 cursor-pointer rounded-lg border-none bg-neutral-200"
+			/>
 		</div>
 	</div>
 </div>
+
+<style>
+	.bruh {
+		--progress-bg: #000;
+		--track-bg: #eee;
+	}
+</style>
