@@ -9,12 +9,14 @@
 
 	import libraries from '../data/kingpierce_libraries.csv';
 	//console.log(libraries);
-	import censustracts_raw from '../data/wa_censustracts.geojson?raw';
+	import censustracts_raw from '../data/wa_censustracts_edit.geojson?raw';
 	//console.log(censustracts_raw);
 	import counties_raw from '../data/wa_counties.geojson?raw';
 	//console.log(counties_raw);	
 
 	let censustracts = JSON.parse(censustracts_raw);
+	//console.log(censustracts)
+
 	let counties = JSON.parse(counties_raw);
 	//console.log(counties);
 	counties.features = counties.features.filter(d => (d.properties.County == "King County" || d.properties.County == "Pierce County"))
