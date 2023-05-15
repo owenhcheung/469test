@@ -63,11 +63,6 @@
 
 		let path = d3.geoPath()
 			.projection(projection);
-		let path2 = d3.geoPath()
-			.projection(projection);
-
-		let path3 = d3.geoPath()
-			.projection(projection);
 
   	svg = d3.select(map)
       .append("svg")
@@ -88,19 +83,11 @@
 			.data(censustracts.features)
 			.enter()
 			.append("path")
-			.attr("d", path2)
+			.attr("d", path)
 			.style("fill", "none")
 			.attr("stroke-width", 1.3)
 			.style("opacity", 0.1)
   		.style("stroke", "#000");
-
-		svg.selectAll("circle")
-			.data(libraries)
-			.enter().append("circle")
-			.attr("cx", function(d) { return projection([d.Long, d.Lat])[0]; })
-			.attr("cy", function(d) { return projection([d.Long, d.Lat])[1]; })
-			.attr("r", 3)
-			.style("fill", "#000");
 
 		library_buffer = turf.buffer(libraries_geojson, 1, { units: 'miles' });
 		let rewound_buffer = rewind(library_buffer, true);
@@ -110,12 +97,19 @@
       .enter()
 			.append("path")
       .attr("class", "buffer")
-      .attr("d", path3)
-      .style("stroke", "#000")
-      .style("stroke-width", 1.3)
-      .style("fill", "#000")
+      .attr("d", path)
+      //.style("stroke", "#000")
+      //.style("stroke-width", 1.3)
+      .style("fill", "#fc8421")
 			.style("fill-opacity", "20%");
 
+		svg.selectAll("circle")
+			.data(libraries)
+			.enter().append("circle")
+			.attr("cx", function(d) { return projection([d.Long, d.Lat])[0]; })
+			.attr("cy", function(d) { return projection([d.Long, d.Lat])[1]; })
+			.attr("r", 3)
+			.style("fill", "#000");
 	});
 
 </script>
