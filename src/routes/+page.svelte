@@ -4,8 +4,6 @@
 	import { onMount } from "svelte";
 	import * as rewind from "@mapbox/geojson-rewind";
 
-	// importing data
-
 	import libraries from "../data/kingpierce_libraries.csv";
 	import censustracts_raw from "../data/wa_censustracts_edit.geojson?raw";
 	import counties_raw from "../data/wa_counties.geojson?raw";
@@ -22,7 +20,8 @@
 
 	let map;
 	let svg;
-
+	let w;
+	let h;
 	let projection;
 	let library_buffer;
 
@@ -32,10 +31,7 @@
 			properties: feature,
 			geometry: {
 				type: "Point",
-				coordinates: [
-					parseFloat(feature.Long),
-					parseFloat(feature.Lat),
-				],
+				coordinates: [parseFloat(feature.Long), parseFloat(feature.Lat)],
 			},
 		};
 	});
@@ -46,17 +42,17 @@
 
 	onMount(() => {
 		projection = d3.geoMercator().fitSize([w - 150, h], counties);
-
 		const path = d3.geoPath().projection(projection);
 
 		svg = d3
 			.select(map)
 			.append("svg")
 			//.attr("preserveAspectRatio", "xMinYMin meet")
-			.attr("width", "100%")
-			.attr("height", "auto");
+			.attr("width", w)
+			.attr("height", h);
 
-		svg.selectAll("path")
+		svg
+			.selectAll("path")
 			.data(counties.features)
 			.enter()
 			.append("path")
@@ -65,7 +61,8 @@
 			.style("stroke", "#000")
 			.attr("stroke-width", 1.3);
 
-		svg.selectAll("path")
+		svg
+			.selectAll("path")
 			.data(censustracts.features)
 			.enter()
 			.append("path")
@@ -78,7 +75,8 @@
 		library_buffer = turf.buffer(libraries_geojson, 1, { units: "miles" });
 		const rewound_buffer = rewind(library_buffer, true);
 
-		svg.selectAll(".buffer")
+		svg
+			.selectAll(".buffer")
 			.data(rewound_buffer.features)
 			.enter()
 			.append("path")
@@ -89,23 +87,25 @@
 			.style("fill", "#fc8421")
 			.style("fill-opacity", "20%");
 
-		svg.selectAll("circle")
+		svg
+			.selectAll("circle")
 			.data(libraries)
 			.enter()
 			.append("circle")
-			.attr("cx", (feature) => {
-				projection([feature.Long, feature.Lat])[0];
-			})
-			.attr("cy", (feature) => {
-				projection([feature.Long, feature.Lat])[1];
-			})
+			.attr("cx", (d) => projection([d.Long, d.Lat])[0])
+			.attr("cy", (d) => projection([d.Long, d.Lat])[1])
 			.attr("r", 3)
 			.style("fill", "#000");
 	});
 </script>
 
 <div class="h-screen w-screen flex">
-	<div bind:this={map} class="w-3/5 h-full p-5 flex items-center">
+	<div
+		bind:this={map}
+		class="w-3/5 h-full p-5 flex items-center"
+		bind:clientWidth={w}
+		bind:clientHeight={h}
+	>
 		<!-- map -->
 	</div>
 	<div class="w-2/5 h-full bg-gray-200 flex items-center justify-center p-5">
@@ -117,8 +117,8 @@
 				by Owen Cheung, Shirley Hu, Truong Le, Jason Lim
 			</p>
 			<p class="text-lg">
-				How well does the public library system serve households with
-				limited broadband access?
+				How well does the public library system serve households with limited
+				broadband access?
 			</p>
 		</div>
 	</div>
