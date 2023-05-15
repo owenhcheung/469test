@@ -7,27 +7,18 @@
 	// importing data
 
 	import libraries from "../data/kingpierce_libraries.csv";
-	//console.log(libraries);
 	import censustracts_raw from "../data/wa_censustracts_edit.geojson?raw";
-	//console.log(censustracts_raw);
 	import counties_raw from "../data/wa_counties.geojson?raw";
-	//console.log(counties_raw);
 	import composite from "../data/kingpierce_composite.csv";
-	console.log(composite);
 
 	let censustracts = JSON.parse(censustracts_raw);
-	//console.log(censustracts)
 
 	let counties = JSON.parse(counties_raw);
-	//console.log(counties);
 	counties.features = counties.features.filter(
-		(d) =>
-			d.properties.County == "King County" ||
-			d.properties.County == "Pierce County"
+		(feature) =>
+			feature.properties.County == "King County" ||
+			feature.properties.County == "Pierce County"
 	);
-	//console.log(kingpierce)
-	//let newcounties = {...counties, features: kingpierce}
-	//console.log(newcounties)
 
 	let map;
 	let svg;
@@ -35,23 +26,28 @@
 	let projection;
 	let library_buffer;
 
-	let libraries_geojson = { type: "FeatureCollection", features: [] };
-	libraries.forEach(function (d) {
-		let feature = {
+	const library_convert = libraries.map((feature) => {
+		return {
 			type: "Feature",
-			properties: d,
+			properties: feature,
 			geometry: {
 				type: "Point",
-				coordinates: [parseFloat(d.Long), parseFloat(d.Lat)],
+				coordinates: [
+					parseFloat(feature.Long),
+					parseFloat(feature.Lat),
+				],
 			},
 		};
-		libraries_geojson.features.push(feature);
 	});
+	const libraries_geojson = {
+		type: "FeatureCollection",
+		features: library_convert,
+	};
 
 	onMount(() => {
 		projection = d3.geoMercator().fitSize([w - 150, h], counties);
 
-		let path = d3.geoPath().projection(projection);
+		const path = d3.geoPath().projection(projection);
 
 		svg = d3
 			.select(map)
@@ -80,7 +76,7 @@
 			.style("stroke", "#000");
 
 		library_buffer = turf.buffer(libraries_geojson, 1, { units: "miles" });
-		let rewound_buffer = rewind(library_buffer, true);
+		const rewound_buffer = rewind(library_buffer, true);
 
 		svg.selectAll(".buffer")
 			.data(rewound_buffer.features)
@@ -97,11 +93,11 @@
 			.data(libraries)
 			.enter()
 			.append("circle")
-			.attr("cx", function (d) {
-				return projection([d.Long, d.Lat])[0];
+			.attr("cx", (feature) => {
+				projection([feature.Long, feature.Lat])[0];
 			})
-			.attr("cy", function (d) {
-				return projection([d.Long, d.Lat])[1];
+			.attr("cy", (feature) => {
+				projection([feature.Long, feature.Lat])[1];
 			})
 			.attr("r", 3)
 			.style("fill", "#000");
