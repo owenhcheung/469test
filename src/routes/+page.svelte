@@ -52,11 +52,7 @@
 		projection = d3.geoMercator().fitSize([w - 150, h], counties);
 		const path = d3.geoPath().projection(projection);
 
-		svg = d3
-			.select(map)
-			.append("svg")
-			.attr("width", "100%") // Set the width to 100% of the parent container
-			.attr("height", h);
+		svg = d3.select(map).append("svg").attr("width", "100%").attr("height", h);
 
 		svg
 			.selectAll("path.counties")
@@ -152,10 +148,3 @@
 		</div>
 	</div>
 </div>
-
-<style>
-	.bruh {
-		--progress-bg: #000;
-		--track-bg: #eee;
-	}
-</style>
