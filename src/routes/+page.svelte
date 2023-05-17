@@ -1,7 +1,8 @@
 <script>
+	import { onMount, afterUpdate } from "svelte";
 	import * as d3 from "d3";
 	import * as turf from "@turf/turf";
-	import { onMount } from "svelte";
+	import { get } from "svelte/store";
 	import * as rewind from "@mapbox/geojson-rewind";
 	import Slider from "@bulatdashiev/svelte-slider";
 
@@ -26,7 +27,7 @@
 	let projection;
 	let library_buffer;
 
-	let value = 1;
+	export let value = 1;
 
 	const library_convert = libraries.map((feature) => {
 		return {
@@ -34,10 +35,7 @@
 			properties: feature,
 			geometry: {
 				type: "Point",
-				coordinates: [
-					parseFloat(feature.Long),
-					parseFloat(feature.Lat),
-				],
+				coordinates: [parseFloat(feature.Long), parseFloat(feature.Lat)],
 			},
 		};
 	});
@@ -46,21 +44,26 @@
 		features: library_convert,
 	};
 
-	onMount(() => {
+	let redrawMap = () => {
+		if (svg) {
+			svg.remove();
+		}
+
 		projection = d3.geoMercator().fitSize([w - 150, h], counties);
 		const path = d3.geoPath().projection(projection);
 
 		svg = d3
 			.select(map)
 			.append("svg")
-			//.attr("preserveAspectRatio", "xMinYMin meet")
-			.attr("width", w)
+			.attr("width", "100%") // Set the width to 100% of the parent container
 			.attr("height", h);
 
-		svg.selectAll("path")
+		svg
+			.selectAll("path.counties")
 			.data(counties.features)
 			.enter()
 			.append("path")
+			.attr("class", "counties")
 			.attr("d", path)
 			.style("fill", "none")
 			.style("stroke", "#000")
@@ -68,10 +71,12 @@
 
 		const rewound_ct = rewind(censustracts, true);
 
-		svg.selectAll("path")
+		svg
+			.selectAll("path.censustracts")
 			.data(rewound_ct.features)
 			.enter()
 			.append("path")
+			.attr("class", "censustracts")
 			.attr("d", path)
 			.style("fill", "none")
 			.attr("stroke-width", 1.3)
@@ -83,18 +88,18 @@
 		});
 		const rewound_buffer = rewind(library_buffer, true);
 
-		svg.selectAll(".buffer")
+		svg
+			.selectAll(".buffer")
 			.data(rewound_buffer.features)
 			.enter()
 			.append("path")
 			.attr("class", "buffer")
 			.attr("d", path)
-			//.style("stroke", "#000")
-			//.style("stroke-width", 1.3)
 			.style("fill", "#fc8421")
 			.style("fill-opacity", "20%");
 
-		svg.selectAll("circle")
+		svg
+			.selectAll("circle")
 			.data(libraries)
 			.enter()
 			.append("circle")
@@ -102,6 +107,14 @@
 			.attr("cy", (d) => projection([d.Long, d.Lat])[1])
 			.attr("r", 3)
 			.style("fill", "#000");
+	};
+
+	onMount(() => {
+		redrawMap();
+	});
+
+	afterUpdate(() => {
+		redrawMap();
 	});
 </script>
 
@@ -123,8 +136,8 @@
 				by Owen Cheung, Shirley Hu, Truong Le, Jason Lim
 			</p>
 			<p class="text-lg pb-10">
-				How well does the public library system serve households with
-				limited broadband access within a
+				How well does the public library system serve households with limited
+				broadband access within a
 				<span class="">{value} mile</span>
 				radius?
 			</p>
