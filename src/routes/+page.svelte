@@ -4,39 +4,15 @@
 	import * as turf from "@turf/turf";
 	import * as rewind from "@mapbox/geojson-rewind";
 	import Slider from "@bulatdashiev/svelte-slider";
-
+	import { geoMercator, geoPath } from "d3-geo";
 	import libraries from "../data/kingpierce_libraries.csv";
-	import censustracts_raw from "../data/wa_censustracts_edit.geojson?raw";
-	import counties_raw from "../data/wa_counties.geojson?raw";
-	import composite from "../data/kingpierce_composite.csv";
+	import censustracts_raw from "../data/wa_censustracts_edit_compress.json";
+	import counties_raw from "../data/wa_counties_compress.json";
+	import composite_king from "../data/king_composite.csv";
+	import composite_pierce from "../data/pierce_composite.csv";
+	import { draw, fade } from "svelte/transition";
 
-	let censustracts = JSON.parse(censustracts_raw);
-
-	let counties = JSON.parse(counties_raw);
-	counties.features = counties.features.filter(
-		(feature) =>
-			feature.properties.County == "King County" ||
-			feature.properties.County == "Pierce County"
-	);
-
-	let map;
-	let svg;
-	let w;
-	let h;
-	let projection;
-	let rewound_buffer;
-	let timer;
-	let bufferRadius = 1;
-
-	$: redrawBuffer(bufferRadius);
-
-	$: debouncedSearch(w, h);
-
-	function debouncedSearch(a, b) {
-		clearTimeout(timer);
-		timer = setTimeout(resizeMap, 100);
-	}
-
+	//convert data into buffer readable format
 	const library_convert = libraries.map((feature) => {
 		return {
 			type: "Feature",
@@ -47,113 +23,114 @@
 			},
 		};
 	});
-	const libraries_geojson = {
-		type: "FeatureCollection",
-		features: library_convert,
-	};
+
+	//did component load?
+	let isLoaded = false;
+
+	//map width and height
+	let w = 850;
+	let h = 937;
+
+	//debounce to reduce # of renders
+	let debouncedDimensions = { w, h };
+	let timeoutHandle;
+	$: {
+		clearTimeout(timeoutHandle);
+		timeoutHandle = setTimeout(() => {
+			debouncedDimensions = { w, h };
+		}, 15);
+	}
+
+	//projection and path engine from d3. re-render when debouncedDimensions fires
+	$: projection = geoMercator().fitSize(
+		[debouncedDimensions.w - 150, debouncedDimensions.h],
+		counties_raw
+	);
+	$: path = geoPath().projection(projection);
+
+	//datapoints
+	let censustracts = [];
+	let counties = [];
+	let buffer = [];
+	let points = [];
+
+	/**
+	 * initialize d3 map. populate datapoints from files
+	 */
 	function initMap() {
-		projection = d3.geoMercator().fitSize([w - 150, h], counties);
-		const path = d3.geoPath().projection(projection);
-
-		svg = d3
-			.select(map)
-			.append("svg")
-			.attr("width", "100%") // Set the width to 100% of the parent container
-			.attr("height", h);
-		svg
-			.selectAll("path.counties")
-			.data(counties.features)
-			.enter()
-			.append("path")
-			.attr("class", "counties")
-			.attr("d", path);
-
-		const rewound_ct = rewind(censustracts, true);
-
-		svg
-			.selectAll("path.censustracts")
-			.data(rewound_ct.features)
-			.enter()
-			.append("path")
-			.attr("class", "censustracts")
-			.attr("d", path);
-
-		const library_buffer = turf.buffer(libraries_geojson, bufferRadius, {
-			units: "miles",
-		});
-		rewound_buffer = rewind(library_buffer, true);
-
-		svg
-			.selectAll(".buffer")
-			.data(rewound_buffer.features)
-			.enter()
-			.append("path")
-			.attr("class", "buffer")
-			.attr("d", path);
-
-		svg
-			.selectAll("circle")
-			.data(libraries)
-			.enter()
-			.append("circle")
-			.attr("cx", (d) => projection([d.Long, d.Lat])[0])
-			.attr("cy", (d) => projection([d.Long, d.Lat])[1])
-			.attr("r", 3)
-			.style("fill", "#000");
+		debouncedDimensions = { w, h };
+		censustracts = rewind(censustracts_raw, true).features;
+		counties = counties_raw.features;
+		points = libraries;
+		redrawBuffer(bufferRadius);
 	}
 
-	function resizeMap() {
-		if (svg == null || projection == null) return;
+	//render buffers
+	let bufferRadius = 1;
+	$: redrawBuffer(bufferRadius);
 
-		svg.attr("width", w - 150).attr("height", h);
-		projection.fitSize([w - 150, h], counties);
-
-		const path = d3.geoPath().projection(projection);
-
-		svg.selectAll("path.counties").attr("d", path);
-
-		svg.selectAll("path.censustracts").attr("d", path);
-
-		svg.selectAll(".buffer").attr("d", path);
-
-		svg
-			.selectAll("circle")
-			.attr("cx", (d) => projection([d.Long, d.Lat])[0])
-			.attr("cy", (d) => projection([d.Long, d.Lat])[1]);
-	}
-
-	function redrawBuffer(value) {
-		if (rewound_buffer == null) return;
-		svg.selectAll(".buffer").remove();
-		const path = d3.geoPath().projection(projection);
-
-		const library_buffer = turf.buffer(libraries_geojson, value, {
-			units: "miles",
-		});
-		rewound_buffer = rewind(library_buffer, true);
-		//svg.selectAll(".buffer").selectAll("path").attr("d", path);
-		svg
-			.selectAll(".buffer")
-			.data(rewound_buffer.features)
-			.enter()
-			.append("path")
-			.attr("class", "buffer")
-			.attr("d", path);
+	/**
+	 * redraws buffer on radius change
+	 * @param radius buffer radius value
+	 */
+	function redrawBuffer(radius) {
+		if (!isLoaded) return; //redwind functions shits on itself on pre-render
+		const library_buffer = turf.buffer(
+			{
+				type: "FeatureCollection",
+				features: library_convert,
+			},
+			radius,
+			{
+				units: "miles",
+			}
+		);
+		buffer = rewind(library_buffer, true).features;
 	}
 
 	onMount(() => {
+		isLoaded = true;
 		initMap();
 	});
 </script>
 
 <div class="h-screen w-screen flex">
 	<div
-		bind:this={map}
 		class="w-3/5 h-full p-5 flex items-center"
 		bind:clientWidth={w}
 		bind:clientHeight={h}
 	>
-		<!-- map -->
+		<svg width={w} height={h}>
+			<g class="censustracts" in:fade={{ delay: 100, duration: 400 }}>
+				{#each censustracts as feature, i}
+					<path d={path(feature)} />
+				{/each}
+			</g>
+
+			<g class="counties">
+				{#each counties as feature, i}
+					<path
+						d={path(feature)}
+						in:draw={{ delay: i * 1000, duration: 2000 }}
+					/>
+				{/each}
+			</g>
+			<g class="buffer">
+				{#each buffer as feature, i}
+					<path d={path(feature)} in:fade={{ delay: i * 15, duration: 200 }} />
+				{/each}
+			</g>
+			<g class="">
+				{#each points as point, i}
+					<circle
+						cx={projection([point.Long, point.Lat])[0]}
+						cy={projection([point.Long, point.Lat])[1]}
+						r={3}
+						in:fade={{ delay: i * 15, duration: 200 }}
+					/>
+				{/each}
+			</g>
+		</svg>
 	</div>
 	<div class="w-2/5 h-full bg-gray-200 flex items-center justify-center p-5">
 		<div>
@@ -182,18 +159,18 @@
 </div>
 
 <style>
-	:global(.censustracts) {
+	.censustracts {
 		fill: none;
 		stroke-width: 1.3px;
 		opacity: 0.1;
 		stroke: #000;
 	}
-	:global(.counties) {
+	.counties {
 		fill: none;
 		stroke: #000;
 		stroke-width: 1.3px;
 	}
-	:global(.buffer) {
+	.buffer {
 		fill: #fc8421;
 		fill-opacity: 20%;
 	}
