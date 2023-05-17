@@ -2,7 +2,6 @@
 	import { onMount, afterUpdate } from "svelte";
 	import * as d3 from "d3";
 	import * as turf from "@turf/turf";
-	import { get } from "svelte/store";
 	import * as rewind from "@mapbox/geojson-rewind";
 	import Slider from "@bulatdashiev/svelte-slider";
 
@@ -25,9 +24,11 @@
 	let w;
 	let h;
 	let projection;
-	let library_buffer;
+	let rewound_buffer;
 
-	export let value = 1;
+	let bufferRadius = 1;
+
+	$: redrawBuffer(bufferRadius);
 
 	const library_convert = libraries.map((feature) => {
 		return {
@@ -35,7 +36,10 @@
 			properties: feature,
 			geometry: {
 				type: "Point",
-				coordinates: [parseFloat(feature.Long), parseFloat(feature.Lat)],
+				coordinates: [
+					parseFloat(feature.Long),
+					parseFloat(feature.Lat),
+				],
 			},
 		};
 	});
@@ -43,12 +47,7 @@
 		type: "FeatureCollection",
 		features: library_convert,
 	};
-
-	let redrawMap = () => {
-		if (svg) {
-			svg.remove();
-		}
-
+	function initMap() {
 		projection = d3.geoMercator().fitSize([w - 150, h], counties);
 		const path = d3.geoPath().projection(projection);
 
@@ -57,49 +56,35 @@
 			.append("svg")
 			.attr("width", "100%") // Set the width to 100% of the parent container
 			.attr("height", h);
-
-		svg
-			.selectAll("path.counties")
+		svg.selectAll("path.counties")
 			.data(counties.features)
 			.enter()
 			.append("path")
 			.attr("class", "counties")
-			.attr("d", path)
-			.style("fill", "none")
-			.style("stroke", "#000")
-			.attr("stroke-width", 1.3);
+			.attr("d", path);
 
 		const rewound_ct = rewind(censustracts, true);
 
-		svg
-			.selectAll("path.censustracts")
+		svg.selectAll("path.censustracts")
 			.data(rewound_ct.features)
 			.enter()
 			.append("path")
 			.attr("class", "censustracts")
-			.attr("d", path)
-			.style("fill", "none")
-			.attr("stroke-width", 1.3)
-			.style("opacity", 0.1)
-			.style("stroke", "#000");
+			.attr("d", path);
 
-		library_buffer = turf.buffer(libraries_geojson, value, {
+		const library_buffer = turf.buffer(libraries_geojson, bufferRadius, {
 			units: "miles",
 		});
-		const rewound_buffer = rewind(library_buffer, true);
+		rewound_buffer = rewind(library_buffer, true);
 
-		svg
-			.selectAll(".buffer")
+		svg.selectAll(".buffer")
 			.data(rewound_buffer.features)
 			.enter()
 			.append("path")
 			.attr("class", "buffer")
-			.attr("d", path)
-			.style("fill", "#fc8421")
-			.style("fill-opacity", "20%");
+			.attr("d", path);
 
-		svg
-			.selectAll("circle")
+		svg.selectAll("circle")
 			.data(libraries)
 			.enter()
 			.append("circle")
@@ -107,14 +92,29 @@
 			.attr("cy", (d) => projection([d.Long, d.Lat])[1])
 			.attr("r", 3)
 			.style("fill", "#000");
-	};
+	}
+
+	function resizeMap() {}
+	function redrawBuffer(value) {
+		if (rewound_buffer == null) return;
+		svg.selectAll(".buffer").remove();
+		const path = d3.geoPath().projection(projection);
+
+		const library_buffer = turf.buffer(libraries_geojson, value, {
+			units: "miles",
+		});
+		rewound_buffer = rewind(library_buffer, true);
+		//svg.selectAll(".buffer").selectAll("path").attr("d", path);
+		svg.selectAll(".buffer")
+			.data(rewound_buffer.features)
+			.enter()
+			.append("path")
+			.attr("class", "buffer")
+			.attr("d", path);
+	}
 
 	onMount(() => {
-		redrawMap();
-	});
-
-	afterUpdate(() => {
-		redrawMap();
+		initMap();
 	});
 </script>
 
@@ -136,9 +136,9 @@
 				by Owen Cheung, Shirley Hu, Truong Le, Jason Lim
 			</p>
 			<p class="text-lg pb-10">
-				How well does the public library system serve households with limited
-				broadband access within a
-				<span class="">{value} mile</span>
+				How well does the public library system serve households with
+				limited broadband access within a
+				<span class="">{bufferRadius} mile</span>
 				radius?
 			</p>
 			<input
@@ -146,7 +146,7 @@
 				type="range"
 				min="1"
 				max="5"
-				bind:value
+				bind:value={bufferRadius}
 				class="w-4/5 h-2 cursor-pointer rounded-lg border-none bg-neutral-200"
 			/>
 		</div>
@@ -157,5 +157,21 @@
 	.bruh {
 		--progress-bg: #000;
 		--track-bg: #eee;
+	}
+
+	:global(.censustracts) {
+		fill: none;
+		stroke-width: 1.3px;
+		opacity: 0.1;
+		stroke: #000;
+	}
+	:global(.counties) {
+		fill: none;
+		stroke: #000;
+		stroke-width: 1.3px;
+	}
+	:global(.buffer) {
+		fill: #fc8421;
+		fill-opacity: 20%;
 	}
 </style>
