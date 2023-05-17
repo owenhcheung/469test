@@ -8,7 +8,8 @@
 	import libraries from "../data/kingpierce_libraries.csv";
 	import censustracts_raw from "../data/wa_censustracts_edit.geojson?raw";
 	import counties_raw from "../data/wa_counties.geojson?raw";
-	import composite from "../data/kingpierce_composite.csv";
+	import composite_king from "../data/king_composite.csv";
+	import composite_pierce from "../data/pierce_composite.csv";
 
 	let censustracts = JSON.parse(censustracts_raw);
 
@@ -30,16 +31,15 @@
 
 	$: redrawBuffer(bufferRadius);
 
+	$: resizeMap(w, h);
+
 	const library_convert = libraries.map((feature) => {
 		return {
 			type: "Feature",
 			properties: feature,
 			geometry: {
 				type: "Point",
-				coordinates: [
-					parseFloat(feature.Long),
-					parseFloat(feature.Lat),
-				],
+				coordinates: [parseFloat(feature.Long), parseFloat(feature.Lat)],
 			},
 		};
 	});
@@ -56,7 +56,8 @@
 			.append("svg")
 			.attr("width", "100%") // Set the width to 100% of the parent container
 			.attr("height", h);
-		svg.selectAll("path.counties")
+		svg
+			.selectAll("path.counties")
 			.data(counties.features)
 			.enter()
 			.append("path")
@@ -65,7 +66,8 @@
 
 		const rewound_ct = rewind(censustracts, true);
 
-		svg.selectAll("path.censustracts")
+		svg
+			.selectAll("path.censustracts")
 			.data(rewound_ct.features)
 			.enter()
 			.append("path")
@@ -77,14 +79,16 @@
 		});
 		rewound_buffer = rewind(library_buffer, true);
 
-		svg.selectAll(".buffer")
+		svg
+			.selectAll(".buffer")
 			.data(rewound_buffer.features)
 			.enter()
 			.append("path")
 			.attr("class", "buffer")
 			.attr("d", path);
 
-		svg.selectAll("circle")
+		svg
+			.selectAll("circle")
 			.data(libraries)
 			.enter()
 			.append("circle")
@@ -94,7 +98,24 @@
 			.style("fill", "#000");
 	}
 
-	function resizeMap() {}
+	function resizeMap(w, h) {
+		svg.attr("width", w - 150).attr("height", h);
+		projection.fitSize([w - 150, h], counties);
+
+		const path = d3.geoPath().projection(projection);
+
+		svg.selectAll("path.counties").attr("d", path);
+
+		svg.selectAll("path.censustracts").attr("d", path);
+
+		svg.selectAll(".buffer").attr("d", path);
+
+		svg
+			.selectAll("circle")
+			.attr("cx", (d) => projection([d.Long, d.Lat])[0])
+			.attr("cy", (d) => projection([d.Long, d.Lat])[1]);
+	}
+
 	function redrawBuffer(value) {
 		if (rewound_buffer == null) return;
 		svg.selectAll(".buffer").remove();
@@ -105,7 +126,8 @@
 		});
 		rewound_buffer = rewind(library_buffer, true);
 		//svg.selectAll(".buffer").selectAll("path").attr("d", path);
-		svg.selectAll(".buffer")
+		svg
+			.selectAll(".buffer")
 			.data(rewound_buffer.features)
 			.enter()
 			.append("path")
@@ -136,8 +158,8 @@
 				by Owen Cheung, Shirley Hu, Truong Le, Jason Lim
 			</p>
 			<p class="text-lg pb-10">
-				How well does the public library system serve households with
-				limited broadband access within a
+				How well does the public library system serve households with limited
+				broadband access within a
 				<span class="">{bufferRadius} mile</span>
 				radius?
 			</p>
@@ -154,11 +176,6 @@
 </div>
 
 <style>
-	.bruh {
-		--progress-bg: #000;
-		--track-bg: #eee;
-	}
-
 	:global(.censustracts) {
 		fill: none;
 		stroke-width: 1.3px;
