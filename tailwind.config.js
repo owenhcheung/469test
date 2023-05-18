@@ -2,7 +2,9 @@
 export default {
   content: ['./src/**/*.{html,js,svelte,ts}'],
   theme: {
-    colors: {},
+    colors: {
+      main: "#1c5078",
+    },
     fontFamily: {
       sans: ['Inter', 'sans-serif'],
     },

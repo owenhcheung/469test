@@ -126,6 +126,7 @@
             <path
               d={path(feature)}
               in:fade={{ delay: i * 15, duration: 200 }}
+              out:fade={{ duration: 200 }}
             />
           {/each}
         </g>
@@ -136,6 +137,7 @@
               cy={projection([point.Long, point.Lat])[1]}
               r={3}
               in:fade={{ delay: i * 15, duration: 200 }}
+              out:fade={{ duration: 200 }}
             />
           {/each}
         </g>
@@ -157,10 +159,10 @@
           type="checkbox"
           bind:checked={showPointsBufferLayer}
           on:change={togglePointsBufferLayer}
-          class="mr-2"
+          class="mr-2 bg-neutral-200"
         />
         Public libraries +
-        <span class="bg-blue-100">{bufferRadius} mile radius</span>
+        <span class="bg-color">{bufferRadius} mile radius</span>
       </p>
       <input
         id="buffer-radius"
@@ -187,10 +189,10 @@
     stroke-width: 1.3px;
   }
   .buffer {
-    fill: #fc8421;
+    fill: #367878;
     fill-opacity: 20%;
   }
-  .bg-blue-100 {
-    background-color: #ebf8ff;
+  .bg-color {
+    background-color: #36787834;
   }
 </style>
