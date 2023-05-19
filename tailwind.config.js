@@ -1,9 +1,11 @@
 /** @type {import('tailwindcss').Config} */
+const colors = require('tailwindcss/colors')
+
 export default {
   content: ['./src/**/*.{html,js,svelte,ts}'],
   theme: {
     colors: {
-      main: "#1c5078",
+      ...colors,
     },
     fontFamily: {
       sans: ['Inter', 'sans-serif'],
