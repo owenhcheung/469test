@@ -19,7 +19,7 @@
 
   export let showPointsBufferLayer = false
   export let showCompositeLayer = false
-  //export let step
+  export let step
 
   // performing joins on csv data so theyre useful in the map
   // const csvDataMap = new Map(composite_p.map(d => [d.GEOID, d]))

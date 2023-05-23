@@ -22,7 +22,17 @@
 </script>
 
 <div class="h-screen w-screen flex overflow-hidden">
-  <Map bind:bufferRadius bind:showPointsBufferLayer bind:showCompositeLayer />
+  <div
+    style="position: absolute; top:15px; right: 15px; background: yellow; z-index: 15;"
+  >
+    {value}
+  </div>
+  <Map
+    bind:bufferRadius
+    bind:showPointsBufferLayer
+    bind:showCompositeLayer
+    step={value}
+  />
   <div class="w-2/5 px-5 py-20 overflow-y-auto">
     <Scrolly bind:value>
       <!-- article header -->
