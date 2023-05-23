@@ -1,6 +1,5 @@
 <script>
   /**
-   * By Russel Goldberg
    * This component manages which item is most in view for scroll triggering
    * example:
    * <Scrolly
@@ -12,6 +11,8 @@
    * optional params with defaults
    * <Scrolly root={null} top={0} bottom={0} increments={100}>
    *
+   * By Russel Goldberg
+   * https://svelte.dev/repl/3d3736e634c9404ea8ec2ef7b87e2053?version=3.42.4
    */
   import { onMount } from 'svelte'
   export let root = null
