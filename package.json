@@ -6,7 +6,8 @@
 		"dev": "vite dev",
 		"build": "vite build",
 		"preview": "vite preview",
-		"deploy": "touch build/.nojekyll && npx gh-pages -d build -t true"
+		"deploy": "pnpm run build && pnpm run deploy:only",
+		"deploy:only": "touch build/.nojekyll && npx gh-pages -d build -t true"
 	},
 	"devDependencies": {
 		"@bulatdashiev/svelte-slider": "^1.0.3",
