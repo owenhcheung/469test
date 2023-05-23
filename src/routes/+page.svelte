@@ -112,14 +112,14 @@
           libraries where people might go to access the internet.
         </p>
 
-        <p class="mb-5">
-          We created a composite index of the income level, percent of
-          households without access to any laptop or computer and households
-          without an internet subscription. The lower values mean that these
-          areas have lower than average values (for example, the average income
-          level per household in the county) for each of the three variables.
-          Below we have included the 3 census tracts with the lowest composite
-          index value.
+        <p id="index-ex" class="mb-5">
+          <span class="bg-lime-100">[x]</span>
+          We created a composite index of the income level, percent of households
+          without access to any laptop or computer and households without an internet
+          subscription. The lower values mean that these areas have lower than average
+          values (for example, the average income level per household in the county)
+          for each of the three variables. Below we have included the 3 census tracts
+          with the lowest composite index value.
         </p>
 
         <!-- pierce composite table -->

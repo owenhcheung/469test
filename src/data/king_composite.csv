@@ -1,4 +1,4 @@
-﻿,census tract,income z-score,computers z-score,internet z-score,composite index value
+﻿id,GEOID,incomeZscore,computersZscore,internetZscore,compositeValue
 0,53033000101,-1.327243226,0.323826406,-0.626550628,107790650.60848
 1,53033000102,-0.99043796,-0.111552774,-1.561398738,107790650.60841
 2,53033000201,-0.708975627,0.762479114,-1.329639736,107790650.81245

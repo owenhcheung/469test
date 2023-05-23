@@ -10,7 +10,10 @@
   import censustracts_raw from '../data/wa_censustracts_edit_compress.json'
   import counties_raw from '../data/wa_counties_compress.json'
   //import composite from '../data/kingpierce_composite.csv'
-  import composite_raw from '../data/compositeCT.json'
+  //import composite_k from '../data/king_composite.csv'
+  //import composite_p from '../data/pierce_composite.csv'
+  import kComposite_raw from '../data/KcompositeCT.json'
+  import pComposite_raw from '../data/PcompositeCT.json'
 
   import { draw, fade } from 'svelte/transition'
 
@@ -19,7 +22,7 @@
   export let step
 
   // performing joins on csv data so theyre useful in the map
-  // const csvDataMap = new Map(composite.map(d => [d.GEOID, d]))
+  // const csvDataMap = new Map(composite_p.map(d => [d.GEOID, d]))
   // const joinedData = censustracts_raw.features
   //   .filter(feature => csvDataMap.has(feature.properties.GEOID))
   //   .map(feature => ({
@@ -85,7 +88,8 @@
   $: path = geoPath().projection(projection)
 
   //datapoints
-  let comp = []
+  let kcomp = []
+  let pcomp = []
   let censustracts = []
   let counties = []
   let buffer = []
@@ -100,7 +104,8 @@
     counties = counties_raw.features
     points = libraries
     redrawBuffer(bufferRadius)
-    comp = rewind(composite_raw, true).features
+    kcomp = rewind(kComposite_raw, true).features
+    pcomp = rewind(pComposite_raw, true).features
   }
 
   //render buffers
@@ -126,24 +131,26 @@
     buffer = rewind(library_buffer, true).features
   }
 
-  const compositeValues = composite_raw.features.map(feature => {
-    console.log(feature.properties) // Check if 'compositeValue' property is accessible
-    return feature.properties.compositeValue
+  const kCompositeValues = kComposite_raw.features.map(feature => {
+    return parseFloat(feature.properties.properties.compositeValue)
   })
 
-  console.log(compositeValues)
+  const pCompositeValues = pComposite_raw.features.map(feature => {
+    return parseFloat(feature.properties.properties.compositeValue)
+  })
 
-  const choroRange = [
-    d3.min(composite_raw.features, d => d.properties.compositeValue),
-    d3.max(composite_raw.features, d => d.properties.compositeValue),
-  ]
+  const kchoroRange = [d3.min(kCompositeValues), d3.max(kCompositeValues)]
+  const pchoroRange = [d3.min(pCompositeValues), d3.max(pCompositeValues)]
 
-  console.log(choroRange)
-
-  const colorScale = d3
+  const kcolorScale = d3
     .scaleLinear()
-    .domain(choroRange)
-    .range(['#1e1b4b', '#022c22'])
+    .domain(kchoroRange)
+    .range(['#fff', '#64748b'])
+
+  const pcolorScale = d3
+    .scaleLinear()
+    .domain(pchoroRange)
+    .range(['#fff', '#64748b'])
 
   onMount(() => {
     isLoaded = true
@@ -157,25 +164,38 @@
   bind:clientHeight={h}
 >
   <svg width={w} height={h}>
-    {#if showCompositeLayer}
-      <g class="composite">
-        {#each comp as feature, i}
-          <path
-            d={path(feature)}
-            fill={colorScale(feature.properties.compositeValue || 0)}
-            stroke="none"
-            in:fade={{ duration: 100 }}
-            out:fade={{ duration: 100 }}
-          />
-        {/each}
-      </g>
-    {/if}
-
     <g class="censustracts" in:fade={{ delay: 100, duration: 100 }}>
       {#each censustracts as feature, i}
         <path d={path(feature)} />
       {/each}
     </g>
+
+    {#if showCompositeLayer}
+      <g class="composite">
+        {#each kcomp as feature, i}
+          <path
+            d={path(feature)}
+            fill={kcolorScale(
+              feature.properties.properties.compositeValue || 0,
+            )}
+            in:fade={{ duration: 200 }}
+            out:fade={{ duration: 200 }}
+          />
+        {/each}
+      </g>
+      <g class="composite">
+        {#each pcomp as feature, i}
+          <path
+            d={path(feature)}
+            fill={pcolorScale(
+              feature.properties.properties.compositeValue || 0,
+            )}
+            in:fade={{ duration: 200 }}
+            out:fade={{ duration: 200 }}
+          />
+        {/each}
+      </g>
+    {/if}
 
     <g class="counties">
       {#each counties as feature, i}
@@ -211,6 +231,9 @@
 <style>
   .composite {
     opacity: 50%;
+    stroke: #000;
+    stroke-width: 0.8px;
+    stroke-opacity: 50%;
   }
   .censustracts {
     fill: none;
