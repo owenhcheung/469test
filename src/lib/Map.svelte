@@ -167,12 +167,12 @@
   const kcolorScale = d3
     .scaleLinear()
     .domain(kchoroRange)
-    .range(['#eff6ff', '#64748b'])
+    .range(['#64748b', '#eff6ff'])
 
   const pcolorScale = d3
     .scaleLinear()
     .domain(pchoroRange)
-    .range(['#eff6ff', '#64748b'])
+    .range(['#64748b', '#eff6ff'])
 
   onMount(() => {
     isMounted = true
