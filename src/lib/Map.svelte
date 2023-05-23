@@ -142,15 +142,17 @@
   const kchoroRange = [d3.min(kCompositeValues), d3.max(kCompositeValues)]
   const pchoroRange = [d3.min(pCompositeValues), d3.max(pCompositeValues)]
 
+  console.log(kchoroRange)
+
   const kcolorScale = d3
     .scaleLinear()
     .domain(kchoroRange)
-    .range(['#fff', '#d4d4d4'])
+    .range(['#eff6ff', '#64748b'])
 
   const pcolorScale = d3
     .scaleLinear()
     .domain(pchoroRange)
-    .range(['#fff', '#d4d4d4'])
+    .range(['#eff6ff', '#64748b'])
 
   onMount(() => {
     isLoaded = true
