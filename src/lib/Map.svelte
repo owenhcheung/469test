@@ -21,6 +21,23 @@
   export let showCompositeLayer = false
   export let step
 
+  // scrolly change on number
+  $: onStepChange(step)
+
+  function onStepChange(currentStep) {
+    switch (currentStep) {
+      case 0:
+        showCompositeLayer = false
+        showPointsBufferLayer = false
+        break
+      case 2:
+        showPointsBufferLayer = true
+        break
+
+      default:
+    }
+  }
+
   // performing joins on csv data so theyre useful in the map
   // const csvDataMap = new Map(composite_p.map(d => [d.GEOID, d]))
   // const joinedData = censustracts_raw.features
@@ -63,7 +80,10 @@
     }
   })
 
-  //did component load?
+  //did component mount?
+  let isMounted = false
+
+  //did map load?
   let isLoaded = false
 
   //map width and height
@@ -117,7 +137,7 @@
    * @param radius buffer radius value
    */
   function redrawBuffer(radius) {
-    if (!isLoaded) return //redwind functions shits on itself on pre-render
+    if (!isMounted) return //redwind functions shits on itself on pre-render
     const library_buffer = turf.buffer(
       {
         type: 'FeatureCollection',
@@ -153,7 +173,7 @@
     .range(['#fff', '#d4d4d4'])
 
   onMount(() => {
-    isLoaded = true
+    isMounted = true
     initMap()
   })
 </script>
