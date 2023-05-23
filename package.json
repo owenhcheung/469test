@@ -6,7 +6,7 @@
 		"dev": "vite dev",
 		"build": "vite build",
 		"preview": "vite preview",
-		"deploy": "npx gh-pages -d dist"
+		"deploy": "touch build/.nojekyll && npx gh-pages -d build -t true"
 	},
 	"devDependencies": {
 		"@bulatdashiev/svelte-slider": "^1.0.3",
@@ -23,6 +23,7 @@
 	"type": "module",
 	"dependencies": {
 		"@mapbox/geojson-rewind": "^0.5.2",
+		"@sveltejs/adapter-static": "^2.0.2",
 		"@turf/buffer": "^6.5.0",
 		"@turf/turf": "^6.5.0",
 		"d3": "^7.8.4",
