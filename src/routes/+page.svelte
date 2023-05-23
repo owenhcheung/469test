@@ -1,14 +1,14 @@
 <script>
-  import Map from '$lib/Map.svelte'
-  import Scrolly from '$lib/Scrolly.svelte'
   import Article from '../lib/Article.svelte'
+  import { fade } from 'svelte/transition'
+  const LoadMap = import('../lib/Map.svelte').then(({ default: C }) => C)
+  let showMap = false
+
   let bufferRadius = 1
 
   let showPointsBufferLayer = false
   let showCompositeLayer = false
-
   let step
-
   function togglePointsBufferLayer() {
     // showPointsBufferLayer = event.target.checked
     showPointsBufferLayer = !showPointsBufferLayer
@@ -22,18 +22,28 @@
   }
 </script>
 
+<div class="absolute right-0 top-0 p-1 z-20 bg-yellow-300">
+  {step}
+</div>
 <div class="h-screen w-screen flex overflow-hidden">
-  <div
-    style="position: absolute; top:15px; right: 15px; background: yellow; z-index: 15;"
-  >
-    {step}
+  <div class="w-3/5 relative">
+    {#await LoadMap}
+      <div
+        class="flex justify-center items-center w-full h-full bg-slate-100 absolute"
+        transition:fade={{ duration: 1000 }}
+      >
+        <div class="loader" />
+      </div>
+    {:then Map}
+      <Map
+        bind:bufferRadius
+        bind:showPointsBufferLayer
+        bind:showCompositeLayer
+        {step}
+      />
+    {/await}
   </div>
-  <Map
-    bind:bufferRadius
-    bind:showPointsBufferLayer
-    bind:showCompositeLayer
-    {step}
-  />
+
   <div class="w-2/5 px-5 py-20 overflow-y-auto">
     <!-- article header -->
     <!-- mt-[40vh] mb-[20vh] -->
@@ -98,5 +108,44 @@
     border-radius: 1rem;
     height: 1rem;
     width: 1rem;
+  }
+  .loader {
+    width: 48px;
+    height: 48px;
+    border: 2px solid rgb(100 116 139);
+    border-radius: 50%;
+    display: inline-block;
+    position: relative;
+    box-sizing: border-box;
+    animation: rotation 1s linear infinite;
+  }
+  .loader::after,
+  .loader::before {
+    content: '';
+    box-sizing: border-box;
+    position: absolute;
+    left: 0;
+    top: 0;
+    background: rgb(99, 119, 146);
+    width: 6px;
+    height: 6px;
+    transform: translate(150%, 150%);
+    border-radius: 50%;
+  }
+  .loader::before {
+    left: auto;
+    top: auto;
+    right: 0;
+    bottom: 0;
+    transform: translate(-150%, -150%);
+  }
+
+  @keyframes rotation {
+    0% {
+      transform: rotate(0deg);
+    }
+    100% {
+      transform: rotate(360deg);
+    }
   }
 </style>

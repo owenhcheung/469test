@@ -84,7 +84,7 @@
   let isMounted = false
 
   //did map load?
-  let isLoaded = false
+  export let isLoaded = false
 
   //map width and height
   let w = 850
@@ -177,16 +177,17 @@
   onMount(() => {
     isMounted = true
     initMap()
+    isLoaded = true
   })
 </script>
 
 <div
-  class="w-3/5 h-full p-5 flex items-center"
+  class="w-full h-full p-5 flex items-center"
   bind:clientWidth={w}
   bind:clientHeight={h}
 >
   <svg width={w} height={h}>
-    <g class="censustracts" in:fade={{ delay: 100, duration: 100 }}>
+    <g class="censustracts" in:fade={{ delay: 100, duration: 500 }}>
       {#each censustracts as feature, i}
         <path d={path(feature)} />
       {/each}
