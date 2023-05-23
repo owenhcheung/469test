@@ -19,7 +19,7 @@
 
   export let showPointsBufferLayer = false
   export let showCompositeLayer = false
-  export let step
+  //export let step
 
   // performing joins on csv data so theyre useful in the map
   // const csvDataMap = new Map(composite_p.map(d => [d.GEOID, d]))
@@ -145,12 +145,12 @@
   const kcolorScale = d3
     .scaleLinear()
     .domain(kchoroRange)
-    .range(['#fff', '#64748b'])
+    .range(['#fff', '#d4d4d4'])
 
   const pcolorScale = d3
     .scaleLinear()
     .domain(pchoroRange)
-    .range(['#fff', '#64748b'])
+    .range(['#fff', '#d4d4d4'])
 
   onMount(() => {
     isLoaded = true
