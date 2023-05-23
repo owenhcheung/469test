@@ -1,17 +1,52 @@
 <script>
   import { onMount } from 'svelte'
+  import * as d3 from 'd3'
 
   import * as turf from '@turf/turf'
   import * as rewind from '@mapbox/geojson-rewind'
   import { geoMercator, geoPath } from 'd3-geo'
+
   import libraries from '../data/kingpierce_libraries.csv'
   import censustracts_raw from '../data/wa_censustracts_edit_compress.json'
   import counties_raw from '../data/wa_counties_compress.json'
-  import composite from '../data/kingpierce_composite.csv'
+  //import composite from '../data/kingpierce_composite.csv'
+  import composite_raw from '../data/compositeCT.json'
+
   import { draw, fade } from 'svelte/transition'
 
   export let showPointsBufferLayer = false
+  export let showCompositeLayer = false
   export let step
+
+  // performing joins on csv data so theyre useful in the map
+  // const csvDataMap = new Map(composite.map(d => [d.GEOID, d]))
+  // const joinedData = censustracts_raw.features
+  //   .filter(feature => csvDataMap.has(feature.properties.GEOID))
+  //   .map(feature => ({
+  //     ...feature,
+  //     properties: {
+  //       ...feature.properties,
+  //       ...csvDataMap.get(feature.properties.GEOID),
+  //     },
+  //   }))
+
+  // const featureCollection = {
+  //   type: 'FeatureCollection',
+  //   features: [],
+  // }
+
+  // joinedData.forEach(row => {
+  //   const { geometry, ...properties } = row
+  //   const feature = {
+  //     type: 'Feature',
+  //     geometry,
+  //     properties,
+  //   }
+  //   featureCollection.features.push(feature)
+  // })
+
+  // // print the resulting feature collection
+  // console.log(JSON.stringify(featureCollection))
 
   //convert data into buffer readable format
   const library_convert = libraries.map(feature => {
@@ -50,6 +85,7 @@
   $: path = geoPath().projection(projection)
 
   //datapoints
+  let comp = []
   let censustracts = []
   let counties = []
   let buffer = []
@@ -64,6 +100,7 @@
     counties = counties_raw.features
     points = libraries
     redrawBuffer(bufferRadius)
+    comp = rewind(composite_raw, true).features
   }
 
   //render buffers
@@ -89,6 +126,25 @@
     buffer = rewind(library_buffer, true).features
   }
 
+  const compositeValues = composite_raw.features.map(feature => {
+    console.log(feature.properties) // Check if 'compositeValue' property is accessible
+    return feature.properties.compositeValue
+  })
+
+  console.log(compositeValues)
+
+  const choroRange = [
+    d3.min(composite_raw.features, d => d.properties.compositeValue),
+    d3.max(composite_raw.features, d => d.properties.compositeValue),
+  ]
+
+  console.log(choroRange)
+
+  const colorScale = d3
+    .scaleLinear()
+    .domain(choroRange)
+    .range(['#1e1b4b', '#022c22'])
+
   onMount(() => {
     isLoaded = true
     initMap()
@@ -101,7 +157,21 @@
   bind:clientHeight={h}
 >
   <svg width={w} height={h}>
-    <g class="censustracts" in:fade={{ delay: 100, duration: 400 }}>
+    {#if showCompositeLayer}
+      <g class="composite">
+        {#each comp as feature, i}
+          <path
+            d={path(feature)}
+            fill={colorScale(feature.properties.compositeValue || 0)}
+            stroke="none"
+            in:fade={{ duration: 100 }}
+            out:fade={{ duration: 100 }}
+          />
+        {/each}
+      </g>
+    {/if}
+
+    <g class="censustracts" in:fade={{ delay: 100, duration: 100 }}>
       {#each censustracts as feature, i}
         <path d={path(feature)} />
       {/each}
@@ -139,16 +209,19 @@
 </div>
 
 <style>
+  .composite {
+    opacity: 50%;
+  }
   .censustracts {
     fill: none;
-    stroke-width: 1.3px;
-    opacity: 0.1;
-    stroke: #000;
+    stroke-width: 0.8px;
+    /* opacity: 0.1; */
+    stroke: #d6d6d6;
   }
   .counties {
     fill: none;
     stroke: #000;
-    stroke-width: 1.3px;
+    stroke-width: 1px;
   }
   .buffer {
     fill: #0e7490;

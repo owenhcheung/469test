@@ -4,21 +4,29 @@
   let bufferRadius = 1
 
   let showPointsBufferLayer = false
+  let showCompositeLayer = false
 
   let value
 
   function togglePointsBufferLayer() {
     // showPointsBufferLayer = event.target.checked
     showPointsBufferLayer = !showPointsBufferLayer
-    dispatch('togglePointsBufferLayer', showPointsBufferLayer)
+    // dispatch('togglePointsBufferLayer', showPointsBufferLayer)
+  }
+
+  function toggleCompositeLayer() {
+    showCompositeLayer = !showCompositeLayer
+    // dispatch('toggleCompositeLayer', showCompositeLayer)
+    console.log(showCompositeLayer)
   }
 </script>
 
 <div class="h-screen w-screen flex overflow-hidden">
-  <Map bind:bufferRadius bind:showPointsBufferLayer />
-  <div class="w-2/5 p-5 overflow-y-auto">
+  <Map bind:bufferRadius bind:showPointsBufferLayer bind:showCompositeLayer />
+  <div class="w-2/5 px-5 py-20 overflow-y-auto">
     <Scrolly bind:value>
       <!-- article header -->
+      <!-- mt-[40vh] mb-[20vh] -->
       <div class="">
         <h2 class="text-4xl font-bold mb-4">
           An Understanding of the Digital Access Divide Outside of Seattle
@@ -29,7 +37,11 @@
       </div>
 
       <!-- buttons -->
-      <button class="p-5 mb-5 rounded border text-left">
+      <button
+        class="p-5 mb-5 rounded border text-left"
+        on:click={toggleCompositeLayer}
+        class:border-black={showCompositeLayer}
+      >
         <p class="text-lg">
           Composite index <a
             href="#index-ex"
