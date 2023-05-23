@@ -3,7 +3,7 @@
   import * as d3 from 'd3'
 
   import * as turf from '@turf/turf'
-  import * as rewind from '@mapbox/geojson-rewind'
+  import rewind from '@mapbox/geojson-rewind'
   import { geoMercator, geoPath } from 'd3-geo'
 
   import libraries from '../data/kingpierce_libraries.csv'
