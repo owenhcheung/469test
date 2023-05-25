@@ -83,9 +83,6 @@
   //did component mount?
   let isMounted = false
 
-  //did map load?
-  export let isLoaded = false
-
   //map width and height
   let w = 850
   let h = 937
@@ -177,7 +174,6 @@
   onMount(() => {
     isMounted = true
     initMap()
-    isLoaded = true
   })
 </script>
 
