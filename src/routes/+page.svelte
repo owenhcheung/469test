@@ -6,6 +6,7 @@
 
   let showPointsBufferLayer = false
   let showCompositeLayer = false
+  let showMeanIncomeLayer = false
 
   let step
 
@@ -20,6 +21,10 @@
     // dispatch('toggleCompositeLayer', showCompositeLayer)
     console.log(showCompositeLayer)
   }
+
+  function toggleMeanIncomeLayer() {
+    showMeanIncomeLayer = !showMeanIncomeLayer
+  }
 </script>
 
 <div class="h-screen w-screen flex overflow-hidden">
@@ -32,6 +37,7 @@
     bind:bufferRadius
     bind:showPointsBufferLayer
     bind:showCompositeLayer
+    bind:showMeanIncomeLayer
     {step}
   />
   <div class="w-2/5 px-5 py-20 overflow-y-auto">
@@ -48,21 +54,23 @@
 
     <!-- buttons -->
     <button
-      class="p-5 mb-5 rounded border text-left"
+      class="p-5 mb-5 mr-5 rounded border text-left"
       on:click={toggleCompositeLayer}
       class:border-black={showCompositeLayer}
     >
-      <p class="text-lg">
-        Composite index <a
-          href="#index-ex"
-          class="bg-lime-100"
-          on:click|stopPropagation>[learn more]</a
-        >
-      </p>
+      <p class="text-lg">Composite index</p>
     </button>
 
     <button
-      class="p-5 w-4/5 rounded border text-left mb-10"
+      class="p-5 mb-5 mr-5 rounded border text-left"
+      on:click={toggleMeanIncomeLayer}
+      class:border-black={showMeanIncomeLayer}
+    >
+      <p class="text-lg">Mean Income</p>
+    </button>
+
+    <button
+      class="p-5 w-4/5 rounded border text-left mb-5 mr-5"
       on:click={togglePointsBufferLayer}
       class:border-black={showPointsBufferLayer}
     >

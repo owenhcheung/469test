@@ -12,8 +12,11 @@
   //import composite from '../data/kingpierce_composite.csv'
   //import composite_k from '../data/king_composite.csv'
   //import composite_p from '../data/pierce_composite.csv'
-  import kComposite_raw from '../data/KcompositeCT.json'
-  import pComposite_raw from '../data/PcompositeCT.json'
+  //import kComposite_raw from '../data/KcompositeCT.json'
+  import fixedcomposite_raw from '../data/fixed_compositeCT.json'
+
+  //import composite_fixed from '../data/composite_fixed_x.csv'
+  //import meanmedian_raw from '../data/meanmedian_compress.json'
 
   import { draw, fade } from 'svelte/transition'
 
@@ -39,7 +42,9 @@
   }
 
   // performing joins on csv data so theyre useful in the map
-  // const csvDataMap = new Map(composite_p.map(d => [d.GEOID, d]))
+
+  // console.log(composite_fixed)
+  // const csvDataMap = new Map(composite_fixed.map(d => [d.GEOID, d]))
   // const joinedData = censustracts_raw.features
   //   .filter(feature => csvDataMap.has(feature.properties.GEOID))
   //   .map(feature => ({
@@ -108,8 +113,7 @@
   $: path = geoPath().projection(projection)
 
   //datapoints
-  let kcomp = []
-  let pcomp = []
+  let comp = []
   let censustracts = []
   let counties = []
   let buffer = []
@@ -124,8 +128,7 @@
     counties = counties_raw.features
     points = libraries
     redrawBuffer(bufferRadius)
-    kcomp = rewind(kComposite_raw, true).features
-    pcomp = rewind(pComposite_raw, true).features
+    comp = rewind(fixedcomposite_raw, true).features
   }
 
   //render buffers
@@ -151,28 +154,28 @@
     buffer = rewind(library_buffer, true).features
   }
 
-  const kCompositeValues = kComposite_raw.features.map(feature => {
+  const compositeValues = fixedcomposite_raw.features.map(feature => {
     return parseFloat(feature.properties.properties.compositeValue)
   })
 
-  const pCompositeValues = pComposite_raw.features.map(feature => {
-    return parseFloat(feature.properties.properties.compositeValue)
-  })
+  // const pCompositeValues = pComposite_raw.features.map(feature => {
+  //   return parseFloat(feature.properties.properties.compositeValue)
+  // })
 
-  const kchoroRange = [d3.min(kCompositeValues), d3.max(kCompositeValues)]
-  const pchoroRange = [d3.min(pCompositeValues), d3.max(pCompositeValues)]
+  //const choroRange = [d3.min(compositeValues), d3.max(compositeValues)]
+  // const pchoroRange = [d3.min(pCompositeValues), d3.max(pCompositeValues)]
 
-  console.log(kchoroRange)
+  //console.log(choroRange)
 
-  const kcolorScale = d3
-    .scaleLinear()
-    .domain(kchoroRange)
-    .range(['#64748b', '#eff6ff'])
+  const colorScale = d3
+    .scaleQuantile()
+    .domain(compositeValues)
+    .range(['#f1f5f9', '#cbd5e1', '#64748b', '#334155', '#0f172a'])
 
-  const pcolorScale = d3
-    .scaleLinear()
-    .domain(pchoroRange)
-    .range(['#64748b', '#eff6ff'])
+  // const pcolorScale = d3
+  //   .scaleLinear()
+  //   .domain(pchoroRange)
+  //   .range(['#64748b', '#eff6ff'])
 
   onMount(() => {
     isMounted = true
@@ -194,18 +197,16 @@
 
     {#if showCompositeLayer}
       <g class="composite">
-        {#each kcomp as feature, i}
+        {#each comp as feature, i}
           <path
             d={path(feature)}
-            fill={kcolorScale(
-              feature.properties.properties.compositeValue || 0,
-            )}
+            fill={colorScale(feature.properties.properties.compositeValue || 0)}
             in:fade={{ duration: 200 }}
             out:fade={{ duration: 200 }}
           />
         {/each}
       </g>
-      <g class="composite">
+      <!-- <g class="composite">
         {#each pcomp as feature, i}
           <path
             d={path(feature)}
@@ -216,7 +217,7 @@
             out:fade={{ duration: 200 }}
           />
         {/each}
-      </g>
+      </g> -->
     {/if}
 
     <g class="counties">
