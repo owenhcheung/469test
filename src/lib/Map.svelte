@@ -16,12 +16,20 @@
   import fixedcomposite_raw from '../data/fixed_compositeCT.json'
 
   //import composite_fixed from '../data/composite_fixed_x.csv'
-  //import meanmedian_raw from '../data/meanmedian_compress.json'
+
+  // import meanmedian_csv from '../data/meanmedian.csv'
+  // console.log(meanmedian_csv)
+  import meanmedian_raw from '../data/meanmedian_fixed2.json'
+  console.log(meanmedian_raw)
+
+  //console.log(meanmedian_raw)
 
   import { draw, fade } from 'svelte/transition'
 
   export let showPointsBufferLayer = false
   export let showCompositeLayer = false
+  export let showMeanIncomeLayer = false
+  export let showMedianIncomeLayer = false
   export let step
 
   // scrolly change on number
@@ -43,8 +51,7 @@
 
   // performing joins on csv data so theyre useful in the map
 
-  // console.log(composite_fixed)
-  // const csvDataMap = new Map(composite_fixed.map(d => [d.GEOID, d]))
+  // const csvDataMap = new Map(meanmedian_csv.map(d => [d.GEOID, d]))
   // const joinedData = censustracts_raw.features
   //   .filter(feature => csvDataMap.has(feature.properties.GEOID))
   //   .map(feature => ({
@@ -115,6 +122,7 @@
   let counties = []
   let buffer = []
   let points = []
+  let meanmedian = []
 
   /**
    * initialize d3 map. populate datapoints from files
@@ -126,6 +134,7 @@
     points = libraries
     redrawBuffer(bufferRadius)
     comp = rewind(fixedcomposite_raw, true).features
+    meanmedian = rewind(meanmedian_raw, true).features
   }
 
   //render buffers
@@ -155,6 +164,79 @@
     return parseFloat(feature.properties.properties.compositeValue)
   })
 
+  const meanValues = meanmedian_raw.features.map(feature => {
+    return feature.properties.properties.meanValue
+  })
+
+  const medianValues = meanmedian_raw.features.map(feature => {
+    return feature.properties.properties.medianValue
+  })
+
+  // turning these values into a csv to combine with my own censustracts data
+
+  // const geoid = meanmedian_raw.features.map(feature => {
+  //   return feature.properties.GEOID20
+  // })
+
+  console.log(meanValues)
+  console.log(medianValues)
+  // console.log(geoid)
+
+  // const combinedData = meanValues.map((mean, index) => [
+  //   geoid[index],
+  //   mean,
+  //   medianValues[index],
+  // ])
+
+  // combinedData.unshift(['GEOID', 'meanValue', 'medianValue'])
+  // const csv = combinedData.map(row => row.join(',')).join('\n')
+
+  // console.log(csv)
+
+  // oh boy here we go again
+  // const filteredFeatures = meanmedian_raw.features.filter(feature => {
+  //   const meanValue = feature.properties.properties.meanValue
+  //   const medianValue = feature.properties.properties.medianValue
+  //   return (
+  //     meanValue !== null &&
+  //     meanValue !== undefined &&
+  //     meanValue !== '' &&
+  //     medianValue !== null &&
+  //     medianValue !== undefined &&
+  //     medianValue !== ''
+  //   )
+  // })
+
+  // const filteredMeanMedianRaw = {
+  //   ...meanmedian_raw,
+  //   features: filteredFeatures,
+  // }
+
+  // console.log(JSON.stringify(filteredMeanMedianRaw))
+
+  // update json with value properties
+  // const meanmedianWithMeanValues = meanmedian_raw.features.map(
+  //   (feature, index) => {
+  //     const meanValue = meanValues[index]
+  //     const medianValue = medianValues[index]
+  //     return {
+  //       ...feature,
+  //       properties: {
+  //         ...feature.properties,
+  //         meanValue: meanValue,
+  //         medianValue: medianValue,
+  //       },
+  //     }
+  //   },
+  // )
+
+  // const updatedMeanMedianRaw = {
+  //   ...meanmedian_raw,
+  //   features: meanmedianWithMeanValues,
+  // }
+
+  // console.log(JSON.stringify(updatedMeanMedianRaw))
+
   // const pCompositeValues = pComposite_raw.features.map(feature => {
   //   return parseFloat(feature.properties.properties.compositeValue)
   // })
@@ -167,6 +249,16 @@
   const colorScale = d3
     .scaleQuantile()
     .domain(compositeValues)
+    .range(['#f1f5f9', '#cbd5e1', '#64748b', '#334155', '#0f172a'])
+
+  const meancolorScale = d3
+    .scaleQuantile()
+    .domain(meanValues)
+    .range(['#f1f5f9', '#cbd5e1', '#64748b', '#334155', '#0f172a'])
+
+  const mediancolorScale = d3
+    .scaleQuantile()
+    .domain(medianValues)
     .range(['#f1f5f9', '#cbd5e1', '#64748b', '#334155', '#0f172a'])
 
   // const pcolorScale = d3
@@ -217,6 +309,32 @@
       </g> -->
     {/if}
 
+    {#if showMeanIncomeLayer}
+      <g class="mean">
+        {#each meanmedian as feature, i}
+          <path
+            d={path(feature)}
+            fill={meancolorScale(feature.properties.properties.meanValue)}
+            in:fade={{ duration: 200 }}
+            out:fade={{ duration: 200 }}
+          />
+        {/each}
+      </g>
+    {/if}
+
+    {#if showMedianIncomeLayer}
+      <g class="mean">
+        {#each meanmedian as feature, i}
+          <path
+            d={path(feature)}
+            fill={meancolorScale(feature.properties.properties.medianValue)}
+            in:fade={{ duration: 200 }}
+            out:fade={{ duration: 200 }}
+          />
+        {/each}
+      </g>
+    {/if}
+
     <g class="counties">
       {#each counties as feature, i}
         <path d={path(feature)} in:draw={{ delay: i * 1000, duration: 2000 }} />
@@ -250,6 +368,18 @@
 
 <style>
   .composite {
+    opacity: 50%;
+    stroke: #000;
+    stroke-width: 0.8px;
+    stroke-opacity: 50%;
+  }
+  .mean {
+    opacity: 50%;
+    stroke: #000;
+    stroke-width: 0.8px;
+    stroke-opacity: 50%;
+  }
+  .median {
     opacity: 50%;
     stroke: #000;
     stroke-width: 0.8px;
