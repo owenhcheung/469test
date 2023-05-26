@@ -9,6 +9,7 @@
 
   let showCompositeLayer = false
   let showMeanIncomeLayer = false
+  let showMedianIncomeLayer = false
 
   let step
   function togglePointsBufferLayer() {
@@ -25,6 +26,10 @@
 
   function toggleMeanIncomeLayer() {
     showMeanIncomeLayer = !showMeanIncomeLayer
+  }
+
+  function toggleMedianIncomeLayer() {
+    showMedianIncomeLayer = !showMedianIncomeLayer
   }
 </script>
 
@@ -46,6 +51,7 @@
         bind:showPointsBufferLayer
         bind:showCompositeLayer
         bind:showMeanIncomeLayer
+        bind:showMedianIncomeLayer
         {step}
       />
     {/await}
@@ -78,6 +84,14 @@
       class:border-black={showMeanIncomeLayer}
     >
       <p class="text-lg">Mean Income</p>
+    </button>
+
+    <button
+      class="p-5 mb-5 mr-5 rounded border text-left"
+      on:click={toggleMedianIncomeLayer}
+      class:border-black={showMedianIncomeLayer}
+    >
+      <p class="text-lg">Median Income</p>
     </button>
 
     <button
