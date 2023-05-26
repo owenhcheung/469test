@@ -284,31 +284,6 @@
       {/each}
     </g>
 
-    {#if showCompositeLayer}
-      <g class="choropleth">
-        {#each comp as feature, i}
-          <path
-            d={path(feature)}
-            fill={colorScale(feature.properties.properties.compositeValue || 0)}
-            in:fade={{ duration: 200 }}
-            out:fade={{ duration: 200 }}
-          />
-        {/each}
-      </g>
-      <!-- <g class="composite">
-        {#each pcomp as feature, i}
-          <path
-            d={path(feature)}
-            fill={pcolorScale(
-              feature.properties.properties.compositeValue || 0,
-            )}
-            in:fade={{ duration: 200 }}
-            out:fade={{ duration: 200 }}
-          />
-        {/each}
-      </g> -->
-    {/if}
-
     {#if showMeanIncomeLayer}
       <g class="choropleth">
         {#each meanmedian as feature, i}
@@ -333,6 +308,31 @@
           />
         {/each}
       </g>
+    {/if}
+
+    {#if showCompositeLayer}
+      <g class="choropleth">
+        {#each comp as feature, i}
+          <path
+            d={path(feature)}
+            fill={colorScale(feature.properties.properties.compositeValue || 0)}
+            in:fade={{ duration: 200 }}
+            out:fade={{ duration: 200 }}
+          />
+        {/each}
+      </g>
+      <!-- <g class="composite">
+      {#each pcomp as feature, i}
+        <path
+          d={path(feature)}
+          fill={pcolorScale(
+            feature.properties.properties.compositeValue || 0,
+          )}
+          in:fade={{ duration: 200 }}
+          out:fade={{ duration: 200 }}
+        />
+      {/each}
+    </g> -->
     {/if}
 
     <g class="counties">
@@ -371,7 +371,7 @@
     opacity: 50%;
     stroke: #000;
     stroke-width: 0.8px;
-    stroke-opacity: 30%;
+    stroke-opacity: 50%;
   }
   .censustracts {
     fill: none;
@@ -386,6 +386,6 @@
   }
   .buffer {
     fill: #db2777;
-    fill-opacity: 20%;
+    fill-opacity: 40%;
   }
 </style>
