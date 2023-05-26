@@ -5,19 +5,19 @@
 		<link rel="icon" href="./favicon.png" />
 		<meta name="viewport" content="width=device-width" />
 		<meta http-equiv="content-security-policy" content="">
-		<link href="./_app/immutable/assets/_layout.1f0b46ce.css" rel="stylesheet">
+		<link href="./_app/immutable/assets/_layout.bad6f5c6.css" rel="stylesheet">
 		<link href="./_app/immutable/assets/_page.2960b2b5.css" rel="stylesheet">
-		<link href="./_app/immutable/assets/Map.96fa54ee.css" rel="stylesheet">
-		<link rel="modulepreload" href="./_app/immutable/entry/start.fed81c7f.js">
+		<link href="./_app/immutable/assets/Map.08bcc58c.css" rel="stylesheet">
+		<link rel="modulepreload" href="./_app/immutable/entry/start.6d06c179.js">
 		<link rel="modulepreload" href="./_app/immutable/chunks/index.4b232d74.js">
-		<link rel="modulepreload" href="./_app/immutable/chunks/singletons.6af439a6.js">
-		<link rel="modulepreload" href="./_app/immutable/entry/app.1ecf1e3c.js">
+		<link rel="modulepreload" href="./_app/immutable/chunks/singletons.9a7b1e6f.js">
+		<link rel="modulepreload" href="./_app/immutable/entry/app.e47d30bc.js">
 		<link rel="modulepreload" href="./_app/immutable/chunks/preload-helper.41c905a7.js">
-		<link rel="modulepreload" href="./_app/immutable/entry/_layout.svelte.22ed6466.js">
+		<link rel="modulepreload" href="./_app/immutable/entry/_layout.svelte.f77b3d7c.js">
 		<link rel="modulepreload" href="./_app/immutable/entry/_layout.js.984db11e.js">
 		<link rel="modulepreload" href="./_app/immutable/chunks/_layout.da46b06b.js">
-		<link rel="modulepreload" href="./_app/immutable/entry/_page.svelte.89dcbaa1.js">
-		<link rel="modulepreload" href="./_app/immutable/chunks/_page.5e67b02e.js">
+		<link rel="modulepreload" href="./_app/immutable/entry/_page.svelte.ec998624.js">
+		<link rel="modulepreload" href="./_app/immutable/chunks/_page.b8eda879.js">
 	</head>
 	<body data-sveltekit-preload-data="hover">
 		<div style="display: contents">
@@ -36,9 +36,13 @@
       </p></div>
 
     
-    <button class="p-5 mb-5 rounded border text-left svelte-1q25w55"><p class="text-lg svelte-1q25w55">Composite index <a href="#index-ex" class="bg-lime-100 svelte-1q25w55">[learn more]</a></p></button>
+    <button class="p-5 mb-5 mr-5 rounded border text-left svelte-1q25w55"><p class="text-lg svelte-1q25w55">Composite index</p></button>
 
-    <button class="p-5 w-4/5 rounded border text-left mb-10 svelte-1q25w55"><p class="text-lg pb-3 svelte-1q25w55">Public libraries +
+    <button class="p-5 mb-5 mr-5 rounded border text-left svelte-1q25w55"><p class="text-lg svelte-1q25w55">Mean Income</p></button>
+
+    <button class="p-5 mb-5 mr-5 rounded border text-left svelte-1q25w55"><p class="text-lg svelte-1q25w55">Median Income</p></button>
+
+    <button class="p-5 w-4/5 rounded border text-left mb-5 mr-5 svelte-1q25w55"><p class="text-lg pb-3 svelte-1q25w55">Public libraries +
         <span class="bg-cyan-700 bg-opacity-20 px-2 py-1 rounded-sm svelte-1q25w55">1 mile radius</span></p>
       <input id="buffer-radius" type="range" min="1" max="5" class="w-full h-2 cursor-pointer appearance-none rounded-full bg-slate-200 svelte-1q25w55" value="1"></button>
 
@@ -104,8 +108,8 @@
 			
 			<script>
 				{
-					__sveltekit_1a2jpax = {
-						assets: "/416test",
+					__sveltekit_1nrz07v = {
+						assets: "/469test",
 						base: new URL(".", location).pathname.slice(0, -1),
 						env: {}
 					};
@@ -115,8 +119,8 @@
 					const data = [null,null];
 
 					Promise.all([
-						import("./_app/immutable/entry/start.fed81c7f.js"),
-						import("./_app/immutable/entry/app.1ecf1e3c.js")
+						import("./_app/immutable/entry/start.6d06c179.js"),
+						import("./_app/immutable/entry/app.e47d30bc.js")
 					]).then(([kit, app]) => {
 						kit.start(app, element, {
 							node_ids: [0, 2],
