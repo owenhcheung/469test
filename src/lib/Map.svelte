@@ -327,7 +327,7 @@
         {#each meanmedian as feature, i}
           <path
             d={path(feature)}
-            fill={meancolorScale(feature.properties.properties.medianValue)}
+            fill={mediancolorScale(feature.properties.properties.medianValue)}
             in:fade={{ duration: 200 }}
             out:fade={{ duration: 200 }}
           />
