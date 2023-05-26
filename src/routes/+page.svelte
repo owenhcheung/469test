@@ -5,8 +5,8 @@
   let showMap = false
 
   let bufferRadius = 1
-
   let showPointsBufferLayer = false
+
   let showCompositeLayer = false
   let showMeanIncomeLayer = false
   let showMedianIncomeLayer = false
@@ -111,6 +111,9 @@
         min="1"
         max="5"
         bind:value={bufferRadius}
+        on:mousedown={() => {
+          if (!showPointsBufferLayer) showPointsBufferLayer = true
+        }}
         class="w-full h-2 cursor-pointer appearance-none rounded-full bg-slate-200"
         on:click|stopPropagation
       />
