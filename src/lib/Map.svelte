@@ -285,7 +285,7 @@
     </g>
 
     {#if showCompositeLayer}
-      <g class="composite">
+      <g class="choropleth">
         {#each comp as feature, i}
           <path
             d={path(feature)}
@@ -310,7 +310,7 @@
     {/if}
 
     {#if showMeanIncomeLayer}
-      <g class="mean">
+      <g class="choropleth">
         {#each meanmedian as feature, i}
           <path
             d={path(feature)}
@@ -323,7 +323,7 @@
     {/if}
 
     {#if showMedianIncomeLayer}
-      <g class="mean">
+      <g class="choropleth">
         {#each meanmedian as feature, i}
           <path
             d={path(feature)}
@@ -367,19 +367,7 @@
 </div>
 
 <style>
-  .composite {
-    opacity: 50%;
-    stroke: #000;
-    stroke-width: 0.8px;
-    stroke-opacity: 50%;
-  }
-  .mean {
-    opacity: 50%;
-    stroke: #000;
-    stroke-width: 0.8px;
-    stroke-opacity: 50%;
-  }
-  .median {
+  .choropleth {
     opacity: 50%;
     stroke: #000;
     stroke-width: 0.8px;
