@@ -371,7 +371,7 @@
     opacity: 50%;
     stroke: #000;
     stroke-width: 0.8px;
-    stroke-opacity: 50%;
+    stroke-opacity: 30%;
   }
   .censustracts {
     fill: none;
@@ -385,7 +385,7 @@
     stroke-width: 1px;
   }
   .buffer {
-    fill: #0e7490;
+    fill: #db2777;
     fill-opacity: 20%;
   }
 </style>
