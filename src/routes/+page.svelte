@@ -12,6 +12,8 @@
   let showMedianIncomeLayer = false
   let showBachLayer = false
   let showHSLayer = false
+  let showComputerLayer = false
+  let showInternetLayer = false
 
   let step
   function togglePointsBufferLayer() {
@@ -24,6 +26,8 @@
     showCompositeLayer = !showCompositeLayer
     showMeanIncomeLayer = false
     showMedianIncomeLayer = false
+    showComputerLayer = false
+    showInternetLayer = false
     // dispatch('toggleCompositeLayer', showCompositeLayer)
   }
 
@@ -31,12 +35,30 @@
     showMeanIncomeLayer = !showMeanIncomeLayer
     showCompositeLayer = false
     showMedianIncomeLayer = false
+    showComputerLayer = false
+    showInternetLayer = false
   }
 
   function toggleMedianIncomeLayer() {
     showMedianIncomeLayer = !showMedianIncomeLayer
     showCompositeLayer = false
     showMeanIncomeLayer = false
+    showComputerLayer = false
+    showInternetLayer = false
+  }
+
+  function toggleComputerLayer() {
+    showComputerLayer = !showComputerLayer
+    showCompositeLayer = false
+    showMeanIncomeLayer = false
+    showInternetLayer = false
+  }
+
+  function toggleInternetLayer() {
+    showInternetLayer = !showInternetLayer
+    showCompositeLayer = false
+    showMeanIncomeLayer = false
+    showComputerLayer = false
   }
 </script>
 
@@ -101,6 +123,22 @@
         class:border-black={showMeanIncomeLayer}
       >
         <p class="text-lg">Mean Income</p>
+      </button>
+
+      <button
+        class="p-5 mb-5 mr-5 rounded border text-left"
+        on:click={toggleComputerLayer}
+        class:border-black={showComputerLayer}
+      >
+        <p class="text-lg">% No Computer</p>
+      </button>
+
+      <button
+        class="p-5 mb-5 mr-5 rounded border text-left"
+        on:click={toggleInternetLayer}
+        class:border-black={showInternetLayer}
+      >
+        <p class="text-lg">% No Internet</p>
       </button>
 
       <button

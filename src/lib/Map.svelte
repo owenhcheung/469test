@@ -21,6 +21,8 @@
   // console.log(meanmedian_csv)
   import meanmedian_raw from '../data/meanmedian_fixed2.json'
 
+  import compinter_raw from '../data/compInter.json'
+
   //import education_raw from '../data/education_compress.json'
 
   import { draw, fade } from 'svelte/transition'
@@ -29,6 +31,8 @@
   export let showCompositeLayer = false
   export let showMeanIncomeLayer = false
   export let showMedianIncomeLayer = false
+  export let showComputerLayer = false
+  export let showInternetLayer = false
   export let step
 
   // scrolly change on number
@@ -41,18 +45,24 @@
         showPointsBufferLayer = false
         showMedianIncomeLayer = false
         showMeanIncomeLayer = false
+        showComputerLayer = false
+        showInternetLayer = false
         break
       case 2:
         showPointsBufferLayer = true
         showCompositeLayer = false
         showMedianIncomeLayer = false
         showMeanIncomeLayer = false
+        showComputerLayer = false
+        showInternetLayer = false
         break
       case 3:
         showCompositeLayer = true
         showPointsBufferLayer = false
         showMedianIncomeLayer = false
         showMeanIncomeLayer = false
+        showComputerLayer = false
+        showInternetLayer = false
         break
 
       default:
@@ -61,7 +71,7 @@
 
   // performing joins on csv data so theyre useful in the map
 
-  // const csvDataMap = new Map(meanmedian_csv.map(d => [d.GEOID, d]))
+  // const csvDataMap = new Map(compinter.map(d => [d.GEOID, d]))
   // const joinedData = censustracts_raw.features
   //   .filter(feature => csvDataMap.has(feature.properties.GEOID))
   //   .map(feature => ({
@@ -133,6 +143,7 @@
   let buffer = []
   let points = []
   let meanmedian = []
+  let compinter = []
 
   /**
    * initialize d3 map. populate datapoints from files
@@ -145,6 +156,7 @@
     redrawBuffer(bufferRadius)
     comp = rewind(fixedcomposite_raw, true).features
     meanmedian = rewind(meanmedian_raw, true).features
+    compinter = rewind(compinter_raw, true).features
   }
 
   //render buffers
@@ -180,6 +192,14 @@
 
   const medianValues = meanmedian_raw.features.map(feature => {
     return feature.properties.properties.medianValue
+  })
+
+  const computerValues = compinter_raw.features.map(feature => {
+    return feature.properties.properties.phh_wocomp
+  })
+
+  const internetValues = compinter_raw.features.map(feature => {
+    return feature.properties.properties.phh_wointernet
   })
 
   // const BAplus = education_raw.features.map(feature => {
@@ -291,6 +311,16 @@
     .domain(medianValues)
     .range(['#f1f5f9', '#cbd5e1', '#64748b', '#334155', '#0f172a'])
 
+  const computercolorScale = d3
+    .scaleQuantile()
+    .domain(computerValues)
+    .range(['#f1f5f9', '#cbd5e1', '#64748b', '#334155', '#0f172a'])
+
+  const internetcolorScale = d3
+    .scaleQuantile()
+    .domain(internetValues)
+    .range(['#f1f5f9', '#cbd5e1', '#64748b', '#334155', '#0f172a'])
+
   // const pcolorScale = d3
   //   .scaleLinear()
   //   .domain(pchoroRange)
@@ -333,6 +363,34 @@
           <path
             d={path(feature)}
             fill={mediancolorScale(feature.properties.properties.medianValue)}
+            in:fade={{ duration: 400 }}
+            out:fade={{ duration: 400 }}
+          />
+        {/each}
+      </g>
+    {/if}
+
+    {#if showComputerLayer}
+      <g class="choropleth">
+        {#each compinter as feature, i}
+          <path
+            d={path(feature)}
+            fill={mediancolorScale(feature.properties.properties.phh_wocomp)}
+            in:fade={{ duration: 400 }}
+            out:fade={{ duration: 400 }}
+          />
+        {/each}
+      </g>
+    {/if}
+
+    {#if showInternetLayer}
+      <g class="choropleth">
+        {#each compinter as feature, i}
+          <path
+            d={path(feature)}
+            fill={mediancolorScale(
+              feature.properties.properties.phh_wointernet,
+            )}
             in:fade={{ duration: 400 }}
             out:fade={{ duration: 400 }}
           />
