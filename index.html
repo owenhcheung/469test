@@ -5,19 +5,19 @@
 		<link rel="icon" href="./favicon.png" />
 		<meta name="viewport" content="width=device-width" />
 		<meta http-equiv="content-security-policy" content="">
-		<link href="./_app/immutable/assets/_layout.af2a9b48.css" rel="stylesheet">
+		<link href="./_app/immutable/assets/_layout.41780888.css" rel="stylesheet">
 		<link href="./_app/immutable/assets/_page.7dbabd5a.css" rel="stylesheet">
 		<link href="./_app/immutable/assets/Map.0b839040.css" rel="stylesheet">
-		<link rel="modulepreload" href="./_app/immutable/entry/start.cc4eb0ab.js">
+		<link rel="modulepreload" href="./_app/immutable/entry/start.6c276862.js">
 		<link rel="modulepreload" href="./_app/immutable/chunks/index.4b232d74.js">
-		<link rel="modulepreload" href="./_app/immutable/chunks/singletons.4d0f0226.js">
-		<link rel="modulepreload" href="./_app/immutable/entry/app.fd0ce15e.js">
+		<link rel="modulepreload" href="./_app/immutable/chunks/singletons.6655e502.js">
+		<link rel="modulepreload" href="./_app/immutable/entry/app.fd26ae9b.js">
 		<link rel="modulepreload" href="./_app/immutable/chunks/preload-helper.41c905a7.js">
-		<link rel="modulepreload" href="./_app/immutable/entry/_layout.svelte.0ae29bfb.js">
+		<link rel="modulepreload" href="./_app/immutable/entry/_layout.svelte.1465a181.js">
 		<link rel="modulepreload" href="./_app/immutable/entry/_layout.js.984db11e.js">
 		<link rel="modulepreload" href="./_app/immutable/chunks/_layout.da46b06b.js">
-		<link rel="modulepreload" href="./_app/immutable/entry/_page.svelte.71c7f0bb.js">
-		<link rel="modulepreload" href="./_app/immutable/chunks/_page.d171d7b8.js">
+		<link rel="modulepreload" href="./_app/immutable/entry/_page.svelte.bf42af05.js">
+		<link rel="modulepreload" href="./_app/immutable/chunks/_page.02d567c2.js">
 	</head>
 	<body data-sveltekit-preload-data="hover">
 		<div style="display: contents">
@@ -37,7 +37,10 @@
       <p class="text-lg mb-10">by Owen Cheung, Shirley Hu, Truong Le, Jason Lim
       </p>
 
-      <a href="#buttons"><span class="bg-lime-300">Skip this→</span></a></div></section>
+      <p><b><a href="https://docs.google.com/presentation/d/1oyxXDbeUVrtLWODAWpIjtDSSj7NTdetf5fP8_rhkbX4/edit?usp=sharing">Project Slide Deck</a></b>
+        |
+        <b><a href="https://docs.google.com/document/d/1sxy0_-VRlGmgmS90CSNflDL9IYobjSiHRnQtQ5AtcD4/edit?usp=sharing">Full Report</a></b></p>
+      <a href="#buttons"><span class="bg-lime-300">Skip to end-&gt;</span></a></div></section>
 
   <section class="my-60"><p class="text-2xl mb-5">Project overview</p>
 
@@ -132,7 +135,7 @@
 
       <button class="p-5 mb-5 mr-5 rounded border text-left svelte-1e1p9fm"><p class="text-lg svelte-1e1p9fm">Median Income</p></button>
 
-      <button class="p-5 mb-5 mr-5 rounded border text-left svelte-1e1p9fm"><p class="text-lg svelte-1e1p9fm">Mean Income</p></button>
+      <button class="p-5 mb-5 mr-5 rounded border text-left hidden svelte-1e1p9fm"><p class="text-lg svelte-1e1p9fm">Mean Income</p></button>
 
       <button class="p-5 w-4/5 rounded border text-left mr-5 svelte-1e1p9fm"><p class="text-lg pb-3 svelte-1e1p9fm">Public libraries +
           <span class="bg-cyan-700 bg-opacity-20 px-2 py-1 rounded-sm svelte-1e1p9fm">1 mile radius</span></p>
@@ -143,7 +146,7 @@
 			
 			<script>
 				{
-					__sveltekit_1vdzdng = {
+					__sveltekit_1xszexm = {
 						assets: "/digital-divide",
 						base: new URL(".", location).pathname.slice(0, -1),
 						env: {}
@@ -154,8 +157,8 @@
 					const data = [null,null];
 
 					Promise.all([
-						import("./_app/immutable/entry/start.cc4eb0ab.js"),
-						import("./_app/immutable/entry/app.fd0ce15e.js")
+						import("./_app/immutable/entry/start.6c276862.js"),
+						import("./_app/immutable/entry/app.fd26ae9b.js")
 					]).then(([kit, app]) => {
 						kit.start(app, element, {
 							node_ids: [0, 2],
