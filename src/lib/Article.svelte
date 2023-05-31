@@ -13,7 +13,22 @@
         by Owen Cheung, Shirley Hu, Truong Le, Jason Lim
       </p>
 
-      <a href="#buttons"><span class="bg-lime-300">Skip this→</span></a>
+      <p>
+        <b>
+          <a
+            href="https://docs.google.com/presentation/d/1oyxXDbeUVrtLWODAWpIjtDSSj7NTdetf5fP8_rhkbX4/edit?usp=sharing"
+            >Project Slide Deck</a
+          >
+        </b>
+        |
+        <b>
+          <a
+            href="https://docs.google.com/document/d/1sxy0_-VRlGmgmS90CSNflDL9IYobjSiHRnQtQ5AtcD4/edit?usp=sharing"
+            >Full Report</a
+          >
+        </b>
+      </p>
+      <a href="#buttons"><span class="bg-lime-300">Skip to end-></span></a>
     </div>
   </section>
 

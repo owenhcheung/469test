@@ -96,7 +96,7 @@
       </button>
 
       <button
-        class="p-5 mb-5 mr-5 rounded border text-left"
+        class="p-5 mb-5 mr-5 rounded border text-left hidden"
         on:click={toggleMeanIncomeLayer}
         class:border-black={showMeanIncomeLayer}
       >
