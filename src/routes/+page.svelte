@@ -40,7 +40,7 @@
   }
 </script>
 
-<div class="absolute right-0 top-0 p-1 z-20 bg-yellow-300">
+<div class="absolute right-0 top-0 p-1 z-20 bg-yellow-300 invisible">
   {step}
 </div>
 <div class="h-screen w-screen flex overflow-hidden">

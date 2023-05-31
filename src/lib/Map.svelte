@@ -22,7 +22,6 @@
   import meanmedian_raw from '../data/meanmedian_fixed2.json'
 
   import education_raw from '../data/education_compress.json'
-  console.log(education_raw)
 
   import { draw, fade } from 'svelte/transition'
 
@@ -210,9 +209,6 @@
     }
     return parseInt(feature.properties.P_HS_HGR)
   })
-
-  console.log(BAplus)
-  console.log(HSplus)
 
   // turning these values into a csv to combine with my own censustracts data
 
