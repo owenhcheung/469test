@@ -21,7 +21,7 @@
   // console.log(meanmedian_csv)
   import meanmedian_raw from '../data/meanmedian_fixed2.json'
 
-  import education_raw from '../data/education_compress.json'
+  //import education_raw from '../data/education_compress.json'
 
   import { draw, fade } from 'svelte/transition'
 
@@ -182,33 +182,33 @@
     return feature.properties.properties.medianValue
   })
 
-  const BAplus = education_raw.features.map(feature => {
-    if (
-      feature.properties.K_BA_HGR !== null &&
-      feature.properties.P_BA_HGR === null
-    ) {
-      return parseInt(feature.properties.K_BA_HGR)
-    } else if (
-      feature.properties.K_BA_HGR === null &&
-      feature.properties.P_BA_HGR !== null
-    ) {
-    }
-    return parseInt(feature.properties.P_BA_HGR)
-  })
+  // const BAplus = education_raw.features.map(feature => {
+  //   if (
+  //     feature.properties.K_BA_HGR !== null &&
+  //     feature.properties.P_BA_HGR === null
+  //   ) {
+  //     return parseInt(feature.properties.K_BA_HGR)
+  //   } else if (
+  //     feature.properties.K_BA_HGR === null &&
+  //     feature.properties.P_BA_HGR !== null
+  //   ) {
+  //   }
+  //   return parseInt(feature.properties.P_BA_HGR)
+  // })
 
-  const HSplus = education_raw.features.map(feature => {
-    if (
-      feature.properties.K_HS_HGR !== null &&
-      feature.properties.P_HS_HGR === null
-    ) {
-      return parseInt(feature.properties.K_HS_HGR)
-    } else if (
-      feature.properties.K_HS_HGR === null &&
-      feature.properties.P_HS_HGR !== null
-    ) {
-    }
-    return parseInt(feature.properties.P_HS_HGR)
-  })
+  // const HSplus = education_raw.features.map(feature => {
+  //   if (
+  //     feature.properties.K_HS_HGR !== null &&
+  //     feature.properties.P_HS_HGR === null
+  //   ) {
+  //     return parseInt(feature.properties.K_HS_HGR)
+  //   } else if (
+  //     feature.properties.K_HS_HGR === null &&
+  //     feature.properties.P_HS_HGR !== null
+  //   ) {
+  //   }
+  //   return parseInt(feature.properties.P_HS_HGR)
+  // })
 
   // turning these values into a csv to combine with my own censustracts data
 

@@ -49,8 +49,9 @@
       <li>Highest level of education</li>
     </ul>
     <p class="mb-5">
-      As well as other miscellaneous factors such as the locations of public
-      libraries where people might go to access the internet.
+      As well as other miscellaneous factors such as the locations of <span
+        class="bg-pink-300">public libraries</span
+      > where people might go to access the internet.
     </p>
   </section>
   <section class="my-60">
