@@ -20,9 +20,9 @@
   // import meanmedian_csv from '../data/meanmedian.csv'
   // console.log(meanmedian_csv)
   import meanmedian_raw from '../data/meanmedian_fixed2.json'
-  console.log(meanmedian_raw)
 
-  //console.log(meanmedian_raw)
+  import education_raw from '../data/education_compress.json'
+  console.log(education_raw)
 
   import { draw, fade } from 'svelte/transition'
 
@@ -40,9 +40,20 @@
       case 0:
         showCompositeLayer = false
         showPointsBufferLayer = false
+        showMedianIncomeLayer = false
+        showMeanIncomeLayer = false
         break
       case 2:
         showPointsBufferLayer = true
+        showCompositeLayer = false
+        showMedianIncomeLayer = false
+        showMeanIncomeLayer = false
+        break
+      case 3:
+        showCompositeLayer = true
+        showPointsBufferLayer = false
+        showMedianIncomeLayer = false
+        showMeanIncomeLayer = false
         break
 
       default:
@@ -172,15 +183,38 @@
     return feature.properties.properties.medianValue
   })
 
+  const BAplus = education_raw.features.map(feature => {
+    if (
+      feature.properties.K_BA_HGR !== null &&
+      feature.properties.P_BA_HGR === null
+    ) {
+      return parseInt(feature.properties.K_BA_HGR)
+    } else if (
+      feature.properties.K_BA_HGR === null &&
+      feature.properties.P_BA_HGR !== null
+    ) {
+    }
+    return parseInt(feature.properties.P_BA_HGR)
+  })
+
+  const HSplus = education_raw.features.map(feature => {
+    if (
+      feature.properties.K_HS_HGR !== null &&
+      feature.properties.P_HS_HGR === null
+    ) {
+      return parseInt(feature.properties.K_HS_HGR)
+    } else if (
+      feature.properties.K_HS_HGR === null &&
+      feature.properties.P_HS_HGR !== null
+    ) {
+    }
+    return parseInt(feature.properties.P_HS_HGR)
+  })
+
+  console.log(BAplus)
+  console.log(HSplus)
+
   // turning these values into a csv to combine with my own censustracts data
-
-  // const geoid = meanmedian_raw.features.map(feature => {
-  //   return feature.properties.GEOID20
-  // })
-
-  console.log(meanValues)
-  console.log(medianValues)
-  // console.log(geoid)
 
   // const combinedData = meanValues.map((mean, index) => [
   //   geoid[index],
@@ -215,9 +249,9 @@
   // console.log(JSON.stringify(filteredMeanMedianRaw))
 
   // update json with value properties
-  // const meanmedianWithMeanValues = meanmedian_raw.features.map(
+  // const withUpdValues = education_raw.features.map(
   //   (feature, index) => {
-  //     const meanValue = meanValues[index]
+  //     const baPlus = meanValues[index]
   //     const medianValue = medianValues[index]
   //     return {
   //       ...feature,
@@ -290,8 +324,8 @@
           <path
             d={path(feature)}
             fill={meancolorScale(feature.properties.properties.meanValue)}
-            in:fade={{ duration: 200 }}
-            out:fade={{ duration: 200 }}
+            in:fade={{ duration: 400 }}
+            out:fade={{ duration: 400 }}
           />
         {/each}
       </g>
@@ -303,8 +337,8 @@
           <path
             d={path(feature)}
             fill={mediancolorScale(feature.properties.properties.medianValue)}
-            in:fade={{ duration: 200 }}
-            out:fade={{ duration: 200 }}
+            in:fade={{ duration: 400 }}
+            out:fade={{ duration: 400 }}
           />
         {/each}
       </g>
@@ -316,8 +350,8 @@
           <path
             d={path(feature)}
             fill={colorScale(feature.properties.properties.compositeValue || 0)}
-            in:fade={{ duration: 200 }}
-            out:fade={{ duration: 200 }}
+            in:fade={{ duration: 400 }}
+            out:fade={{ duration: 400 }}
           />
         {/each}
       </g>
@@ -368,10 +402,10 @@
 
 <style>
   .choropleth {
-    opacity: 50%;
+    opacity: 80%;
     stroke: #000;
     stroke-width: 0.8px;
-    stroke-opacity: 50%;
+    stroke-opacity: 70%;
   }
   .censustracts {
     fill: none;
