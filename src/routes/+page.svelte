@@ -14,8 +14,12 @@
   let showHSLayer = false
   let showComputerLayer = false
   let showInternetLayer = false
+  let showBALayer = false
+
+  let toggletable = false
 
   let step
+
   function togglePointsBufferLayer() {
     // showPointsBufferLayer = event.target.checked
     showPointsBufferLayer = !showPointsBufferLayer
@@ -28,6 +32,7 @@
     showMedianIncomeLayer = false
     showComputerLayer = false
     showInternetLayer = false
+    showBALayer = false
     // dispatch('toggleCompositeLayer', showCompositeLayer)
   }
 
@@ -37,6 +42,7 @@
     showMedianIncomeLayer = false
     showComputerLayer = false
     showInternetLayer = false
+    showBALayer = false
   }
 
   function toggleMedianIncomeLayer() {
@@ -45,20 +51,34 @@
     showMeanIncomeLayer = false
     showComputerLayer = false
     showInternetLayer = false
+    showBALayer = false
   }
 
   function toggleComputerLayer() {
     showComputerLayer = !showComputerLayer
     showCompositeLayer = false
     showMeanIncomeLayer = false
+    showMedianIncomeLayer = false
     showInternetLayer = false
+    showBALayer = false
   }
 
   function toggleInternetLayer() {
     showInternetLayer = !showInternetLayer
     showCompositeLayer = false
     showMeanIncomeLayer = false
+    showMedianIncomeLayer = false
     showComputerLayer = false
+    showBALayer = false
+  }
+
+  function toggleBALayer() {
+    showBALayer = !showBALayer
+    showCompositeLayer = false
+    showMeanIncomeLayer = false
+    showMedianIncomeLayer = false
+    showComputerLayer = false
+    showInternetLayer = false
   }
 </script>
 
@@ -81,6 +101,9 @@
         bind:showCompositeLayer
         bind:showMeanIncomeLayer
         bind:showMedianIncomeLayer
+        bind:showComputerLayer
+        bind:showInternetLayer
+        bind:showBALayer
         {step}
       />
     {/await}
@@ -139,6 +162,14 @@
         class:border-black={showInternetLayer}
       >
         <p class="text-lg">% No Internet</p>
+      </button>
+
+      <button
+        class="p-5 mb-5 mr-5 rounded border text-left"
+        on:click={toggleBALayer}
+        class:border-black={showBALayer}
+      >
+        <p class="text-lg">Bachelors Degree+</p>
       </button>
 
       <button

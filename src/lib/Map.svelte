@@ -21,9 +21,11 @@
   // console.log(meanmedian_csv)
   import meanmedian_raw from '../data/meanmedian_fixed2.json'
 
-  import compinter_raw from '../data/compInter.json'
+  import compinter_raw from '../data/compinter_fixed.json'
 
-  //import education_raw from '../data/education_compress.json'
+  import education_raw from '../data/education_compress4.json'
+  console.log(education_raw)
+  //import education_csv from '../data/education.csv'
 
   import { draw, fade } from 'svelte/transition'
 
@@ -33,6 +35,7 @@
   export let showMedianIncomeLayer = false
   export let showComputerLayer = false
   export let showInternetLayer = false
+  export let showBALayer = false
   export let step
 
   // scrolly change on number
@@ -47,7 +50,17 @@
         showMeanIncomeLayer = false
         showComputerLayer = false
         showInternetLayer = false
+        showBALayer = false
         break
+      // case 2:
+      //   showCompositeLayer = false
+      //   showPointsBufferLayer = false
+      //   showMedianIncomeLayer = false
+      //   showMeanIncomeLayer = false
+      //   showComputerLayer = false
+      //   showInternetLayer = false
+      //   showBALayer = false
+      //   break
       case 2:
         showPointsBufferLayer = true
         showCompositeLayer = false
@@ -55,6 +68,7 @@
         showMeanIncomeLayer = false
         showComputerLayer = false
         showInternetLayer = false
+        showBALayer = false
         break
       case 3:
         showCompositeLayer = true
@@ -63,6 +77,7 @@
         showMeanIncomeLayer = false
         showComputerLayer = false
         showInternetLayer = false
+        showBALayer = false
         break
 
       default:
@@ -71,7 +86,7 @@
 
   // performing joins on csv data so theyre useful in the map
 
-  // const csvDataMap = new Map(compinter.map(d => [d.GEOID, d]))
+  // const csvDataMap = new Map(education_csv.map(d => [d.GEOID, d]))
   // const joinedData = censustracts_raw.features
   //   .filter(feature => csvDataMap.has(feature.properties.GEOID))
   //   .map(feature => ({
@@ -144,6 +159,7 @@
   let points = []
   let meanmedian = []
   let compinter = []
+  let ba = []
 
   /**
    * initialize d3 map. populate datapoints from files
@@ -157,6 +173,7 @@
     comp = rewind(fixedcomposite_raw, true).features
     meanmedian = rewind(meanmedian_raw, true).features
     compinter = rewind(compinter_raw, true).features
+    ba = rewind(education_raw, true).features
   }
 
   //render buffers
@@ -168,7 +185,7 @@
    * @param radius buffer radius value
    */
   function redrawBuffer(radius) {
-    if (!isMounted) return //redwind functions shits on itself on pre-render
+    if (!isMounted) return //rewind functions dies on pre-render
     const library_buffer = turf.buffer(
       {
         type: 'FeatureCollection',
@@ -195,11 +212,11 @@
   })
 
   const computerValues = compinter_raw.features.map(feature => {
-    return feature.properties.properties.phh_wocomp
+    return parseFloat(feature.properties.computerValue)
   })
 
   const internetValues = compinter_raw.features.map(feature => {
-    return feature.properties.properties.phh_wointernet
+    return parseFloat(feature.properties.internetValue)
   })
 
   // const BAplus = education_raw.features.map(feature => {
@@ -216,76 +233,54 @@
   //   return parseInt(feature.properties.P_BA_HGR)
   // })
 
-  // const HSplus = education_raw.features.map(feature => {
-  //   if (
-  //     feature.properties.K_HS_HGR !== null &&
-  //     feature.properties.P_HS_HGR === null
-  //   ) {
-  //     return parseInt(feature.properties.K_HS_HGR)
-  //   } else if (
-  //     feature.properties.K_HS_HGR === null &&
-  //     feature.properties.P_HS_HGR !== null
-  //   ) {
-  //   }
-  //   return parseInt(feature.properties.P_HS_HGR)
+  const baValues = education_raw.features.map(feature => {
+    return parseFloat(feature.properties.BAplusnum)
+  })
+
+  // const geoid = education_raw.features.map(feature => {
+  //   return parseFloat(feature.properties.GEOID20)
   // })
 
   // turning these values into a csv to combine with my own censustracts data
 
-  // const combinedData = meanValues.map((mean, index) => [
-  //   geoid[index],
-  //   mean,
-  //   medianValues[index],
-  // ])
+  // const combinedData = BAplus.map((value, index) => [geoid[index], value])
 
-  // combinedData.unshift(['GEOID', 'meanValue', 'medianValue'])
+  // combinedData.unshift(['GEOID', 'BAplus'])
   // const csv = combinedData.map(row => row.join(',')).join('\n')
 
   // console.log(csv)
 
   // oh boy here we go again
-  // const filteredFeatures = meanmedian_raw.features.filter(feature => {
-  //   const meanValue = feature.properties.properties.meanValue
-  //   const medianValue = feature.properties.properties.medianValue
-  //   return (
-  //     meanValue !== null &&
-  //     meanValue !== undefined &&
-  //     meanValue !== '' &&
-  //     medianValue !== null &&
-  //     medianValue !== undefined &&
-  //     medianValue !== ''
-  //   )
+  // const filteredFeatures = education_raw.features.filter(feature => {
+  //   const BAplus = feature.properties.BAplusnum
+  //   return BAplus !== null && BAplus !== undefined && BAplus !== ''
   // })
 
   // const filteredMeanMedianRaw = {
-  //   ...meanmedian_raw,
+  //   ...education_raw,
   //   features: filteredFeatures,
   // }
 
   // console.log(JSON.stringify(filteredMeanMedianRaw))
 
   // update json with value properties
-  // const withUpdValues = education_raw.features.map(
-  //   (feature, index) => {
-  //     const baPlus = meanValues[index]
-  //     const medianValue = medianValues[index]
-  //     return {
-  //       ...feature,
-  //       properties: {
-  //         ...feature.properties,
-  //         meanValue: meanValue,
-  //         medianValue: medianValue,
-  //       },
-  //     }
-  //   },
-  // )
+  // const withUpdValues = education_raw.features.map((feature, index) => {
+  //   const BAplusnum = BAplus[index]
+  //   return {
+  //     ...feature,
+  //     properties: {
+  //       ...feature.properties,
+  //       BAplusnum: BAplusnum,
+  //     },
+  //   }
+  // })
 
-  // const updatedMeanMedianRaw = {
-  //   ...meanmedian_raw,
-  //   features: meanmedianWithMeanValues,
+  // const updatedFile = {
+  //   ...education_raw,
+  //   features: withUpdValues,
   // }
 
-  // console.log(JSON.stringify(updatedMeanMedianRaw))
+  // console.log(JSON.stringify(updatedFile))
 
   // const pCompositeValues = pComposite_raw.features.map(feature => {
   //   return parseFloat(feature.properties.properties.compositeValue)
@@ -311,14 +306,19 @@
     .domain(medianValues)
     .range(['#f1f5f9', '#cbd5e1', '#64748b', '#334155', '#0f172a'])
 
-  const computercolorScale = d3
+  const compcolorScale = d3
     .scaleQuantile()
     .domain(computerValues)
     .range(['#f1f5f9', '#cbd5e1', '#64748b', '#334155', '#0f172a'])
 
-  const internetcolorScale = d3
+  const intercolorScale = d3
     .scaleQuantile()
     .domain(internetValues)
+    .range(['#f1f5f9', '#cbd5e1', '#64748b', '#334155', '#0f172a'])
+
+  const bacolorScale = d3
+    .scaleQuantile()
+    .domain(baValues)
     .range(['#f1f5f9', '#cbd5e1', '#64748b', '#334155', '#0f172a'])
 
   // const pcolorScale = d3
@@ -375,7 +375,7 @@
         {#each compinter as feature, i}
           <path
             d={path(feature)}
-            fill={mediancolorScale(feature.properties.properties.phh_wocomp)}
+            fill={compcolorScale(feature.properties.computerValue)}
             in:fade={{ duration: 400 }}
             out:fade={{ duration: 400 }}
           />
@@ -388,9 +388,20 @@
         {#each compinter as feature, i}
           <path
             d={path(feature)}
-            fill={mediancolorScale(
-              feature.properties.properties.phh_wointernet,
-            )}
+            fill={intercolorScale(feature.properties.internetValue)}
+            in:fade={{ duration: 400 }}
+            out:fade={{ duration: 400 }}
+          />
+        {/each}
+      </g>
+    {/if}
+
+    {#if showBALayer}
+      <g class="choropleth">
+        {#each ba as feature, i}
+          <path
+            d={path(feature)}
+            fill={bacolorScale(feature.properties.BAplusnum)}
             in:fade={{ duration: 400 }}
             out:fade={{ duration: 400 }}
           />
