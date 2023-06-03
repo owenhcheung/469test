@@ -1,6 +1,10 @@
 <script>
   import Scrolly from './Scrolly.svelte'
   export let step
+  export let showMedianIncomeLayer
+  export let showComputerLayer
+  export let showInternetLayer
+  export let showBALayer
 </script>
 
 <Scrolly bind:value={step} class="snap-y">
@@ -17,113 +21,128 @@
         <b>
           <a
             href="https://docs.google.com/presentation/d/1oyxXDbeUVrtLWODAWpIjtDSSj7NTdetf5fP8_rhkbX4/edit?usp=sharing"
-            >Project Slide Deck</a
+            target="_blank"
+            rel="noopener noreferrer">Project Slide Deck</a
           >
         </b>
         |
         <b>
           <a
             href="https://docs.google.com/document/d/1sxy0_-VRlGmgmS90CSNflDL9IYobjSiHRnQtQ5AtcD4/edit?usp=sharing"
-            >Full Report</a
+            target="_blank"
+            rel="noopener noreferrer">Full Report</a
           >
         </b>
       </p>
-      <a href="#buttons"><span class="bg-lime-300">Skip to end-></span></a>
+      <a href="#buttons"
+        ><span class="bg-lime-300">Skip to playground-></span></a
+      >
     </div>
   </section>
 
-  <section class="my-60">
+  <section class="my-40">
     <p class="text-2xl mb-5">Project overview</p>
-
-    <p class="mb-10">
-      We were asked by InterConnection, an organization based in Seattle,
-      Washington, to investigate the digital access divide outside of the city
-      of Seattle. InterConnection aims to bridge the digital gap through
-      providing devices such as computers and laptops as well as affordable
-      internet options for households without them. They mentioned that much of
-      the population they have focused their efforts on has moved outside of the
-      immediate city of Seattle and into the surrounding areas such as Pierce
-      County and some parts of south King County.
+    <p class="mb-5 max-w-prose">
+      <a
+        href="https://interconnection.org/"
+        target="_blank"
+        rel="noopener noreferrer"
+        class="bg-sky-300">InterConnection</a
+      >, is a 501(c)3 non-profit organization based in Seattle, WA focused on
+      making information + communication technology accessible to underserved
+      communities.
+    </p>
+    <p class="mb-20 max-w-prose">
+      For this project, we were tasked by InterConnection to investigate the
+      <a
+        href="https://www.britannica.com/topic/digital-divide"
+        target="_blank"
+        rel="noopener noreferrer"
+        class="bg-purple-300">digital access divide</a
+      > outside of Seattle. They aim to bridge the digital divide by providing devices
+      such as computers + laptops as well as affordable internet options for households
+      that lack those resources. InterConnection believes that much of the population
+      that was previously served by the organization have moved outside of the immediate
+      vicinity of Seattle and into surrounding areas.
+    </p>
+    <p class="text-xl max-w-prose mb-20">
+      So the question is... <span
+        class="italic underline underline-offset-2 decoration-2">where</span
+      >?
+    </p>
+    <p class="max-w-prose">
+      To answer this, we collected + compiled data -> created visualizations
+      highlighting areas more heavily impacted by the digital access divide. We
+      hope this might help InterConnection gain better insight into exactly
+      where their target communities have moved to.
     </p>
   </section>
 
-  <!-- <section class="my-60">
-    <p class="text-2xl mb-5">Problem statement</p>
-
-    <p class="mb-10">
-      We have compiled the following questions to guide our research and
-      project. Since we are focusing our project on areas outside of the Seattle
-      area, we would like to know which regions surrounding the city experience
-      digital inequity.
-    </p>
-    <ul class="list-disc list-inside mb-5 ml-5">
-      <li class="mb-5">
-        Have the populations that InterConnection serves moved out of the
-        immediate Seattle area? If so, where have they moved to?
-      </li>
-      <li>
-        Which places should InterConnection target for outreach as demonstrated
-        by a lack of access to internet connection and devices (i.e. computers)
-        that can access WiFi?
-      </li>
-    </ul>
-  </section> -->
-
-  <section class="my-60">
+  <section class="mt-40">
     <p class="text-2xl pb-5">Research</p>
 
-    <p class="mb-5">
-      Our research investigated the digital divide outside of the city of
-      Seattle. We focused our research and data collection on the neighboring
-      counties of Pierce County and south of King County (specifically the
-      regions bounded by Kent, Federal Way and Auburn). We determined several
-      important variables that will be used to analyze which areas of Washington
-      need the most support:
+    <p class="max-w-prose">
+      Through our research, we determined several important variables used to
+      pinpoint locations in Pierce and King County most in need of support:
     </p>
-    <ul class="list-disc list-inside mb-5 ml-5">
+    <!-- <ul class="list-disc list-inside mb-5 ml-5">
       <li>Income level</li>
       <li>Devices per household</li>
       <li>Type of internet subscription</li>
       <li>Highest level of education</li>
     </ul>
-    <p class="mb-5">
+    <p class="mb-5 max-w-prose">
       As well as other miscellaneous factors such as the locations of <span
         class="bg-pink-300">public libraries</span
       > where people might go to access the internet.
+    </p> -->
+  </section>
+
+  <section
+    class="my-20 border rounded p-5"
+    class:border-black={showMedianIncomeLayer}
+  >
+    <p class="text-xl pb-5">Income</p>
+
+    <p class="mb-5 max-w-prose">
+      According to <a
+        href="https://www.pewresearch.org/short-reads/2021/06/22/digital-divide-persists-even-as-americans-with-lower-incomes-make-gains-in-tech-adoption/"
+        target="_blank"
+        rel="noopener noreferrer"
+        class="bg-orange-300">this study</a
+      > by the Pew Research Center, individuals with an income of 100K or more a
+      year were almost 50% more likely to have access to a desktop/laptop and internet,
+      compared to somebody with a lower income (0 - 30K a year).
+    </p>
+    <p class="max-w-prose">
+      We identified a large gap in median income levels within the Southern part
+      of King County/Central to Southwest Pierce County. Specifically, we see
+      these gaps in the SeaTac, Kent, Auburn, Federal Way, Tacoma, Lakewood, and
+      Steilacoom regions.
     </p>
   </section>
 
-  <!-- <section class="my-60">
-    <p class="text-2xl mb-5">Income Level</p>
+  <section class="my-20 border rounded p-5" class:border-black={showBALayer}>
+    <p class="text-xl pb-5">Education</p>
 
-    <p class="mb-10">
-      From our research about the digital divide, it has taught us that income
-      is correlated to an individual's ability to access the internet. From a
-      study done at the Pew Center, researchers were able to see that
-      individuals with an income of 100K or more a year were almost 50% more
-      likely to have access to a desktop/laptop and the internet, compared to
-      somebody with a lower income of 0 - 30K a year (Vogels, 2021). To further
-      study on this topic, we have decided to look at the income levels of
-      census tracts in Pierce and King County relative to their ability to
-      access the internet and digital devices.
+    <p class="mb-5 max-w-prose">
+      In terms of education, we reason that an individual with access to higher
+      education is more likely to have the digital literacy and resources to
+      have sufficient broadband/devices at home compared to those without.
     </p>
-
-    <p class="mb-10">
-      Looking at our maps, we are able to see that when looking at the median
-      incomes, the statistics look relatively similar. We are able to see that
-      the Southern part of King County and central to Southwest Pierce County
-      had a large gap in income levels. Specifically, we see the gaps in SeaTac,
-      Kent, Auburn, Federal Way, Tacoma, Lakewood, and Steilacoom.
+    <p class="mb-5 max-w-prose">
+      We identified a gap in areas where people pursued higher education
+      specifically in our areas of focus; Pierce + South King County.
     </p>
-  </section> -->
+  </section>
 
-  <section class="my-60">
-    <p id="index-ex" class="mb-5">
+  <section class="my-40">
+    <p id="index-ex" class="mb-5 max-w-prose">
       A composite index is a tool that allows us to combine multiple variables
       into a single metric to help us determine which areas experience
       inaccessibility to digital devices and the internet. 2021.
     </p>
-    <p id="index-ex" class="mb-10">
+    <p id="index-ex" class="mb-10 max-w-prose">
       We created a composite index of the <b
         >income level, percent of households without access to any laptop or
         computer and households without an internet subscription</b
@@ -214,7 +233,7 @@
     </table>
 
     <!-- king composite table -->
-    <table class="w-full table-fixed mb-10 shadow-lg">
+    <table class="w-full table-fixed shadow-lg">
       <tr>
         <th class="bg-slate-100 border text-left px-8 py-4"
           >Census Tract (King)</th
@@ -274,7 +293,7 @@
       </tr>
       <tr>
         <td class="border px-8 py-4">53033029206</td>
-        <td class="border px-8 py-4">O’Brien region, north of Kent (Kent)</td>
+        <td class="border px-8 py-4">O'Brien region, north of Kent (Kent)</td>
         <td class="border px-8 py-4">-2.291</td>
       </tr>
     </table>

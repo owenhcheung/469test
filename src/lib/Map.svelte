@@ -52,17 +52,17 @@
         showInternetLayer = false
         showBALayer = false
         break
-      // case 2:
-      //   showCompositeLayer = false
-      //   showPointsBufferLayer = false
-      //   showMedianIncomeLayer = false
-      //   showMeanIncomeLayer = false
-      //   showComputerLayer = false
-      //   showInternetLayer = false
-      //   showBALayer = false
-      //   break
+      case 1:
+        showCompositeLayer = false
+        showPointsBufferLayer = false
+        showMedianIncomeLayer = false
+        showMeanIncomeLayer = false
+        showComputerLayer = false
+        showInternetLayer = false
+        showBALayer = false
+        break
       case 2:
-        showPointsBufferLayer = true
+        showPointsBufferLayer = false
         showCompositeLayer = false
         showMedianIncomeLayer = false
         showMeanIncomeLayer = false
@@ -71,6 +71,55 @@
         showBALayer = false
         break
       case 3:
+        showCompositeLayer = false
+        showPointsBufferLayer = false
+        showMedianIncomeLayer = true
+        showMeanIncomeLayer = false
+        showComputerLayer = false
+        showInternetLayer = false
+        showBALayer = false
+        break
+      case 4:
+        showCompositeLayer = false
+        showPointsBufferLayer = false
+        showMedianIncomeLayer = false
+        showMeanIncomeLayer = false
+        showComputerLayer = false
+        showInternetLayer = false
+        showBALayer = true
+        break
+
+      case 5:
+        showCompositeLayer = false
+        showPointsBufferLayer = false
+        showMedianIncomeLayer = false
+        showMeanIncomeLayer = false
+        showComputerLayer = true
+        showInternetLayer = false
+        showBALayer = false
+        break
+
+      case 6:
+        showCompositeLayer = false
+        showPointsBufferLayer = false
+        showMedianIncomeLayer = false
+        showMeanIncomeLayer = false
+        showComputerLayer = false
+        showInternetLayer = true
+        showBALayer = false
+        break
+
+      case 7:
+        showCompositeLayer = false
+        showPointsBufferLayer = true
+        showMedianIncomeLayer = false
+        showMeanIncomeLayer = false
+        showComputerLayer = false
+        showInternetLayer = false
+        showBALayer = false
+        break
+
+      case 8:
         showCompositeLayer = true
         showPointsBufferLayer = false
         showMedianIncomeLayer = false
@@ -290,36 +339,44 @@
   // const pchoroRange = [d3.min(pCompositeValues), d3.max(pCompositeValues)]
 
   //console.log(choroRange)
+  const colorDefault = ['#6e6e6e', '#969696', '#bababa', '#dddddd', '#ffffff']
+  const colorHighContrast = [
+    '#2b2b2b',
+    '#353d41',
+    '#3a5056',
+    '#3c616c',
+    '#397381',
+    '#308497',
+    '#1995ae',
+  ]
+  export let isHighContrast = false
+  let colorArr = colorDefault
+  $: colorArr = isHighContrast ? colorHighContrast : colorDefault
+  //let colorScale = d3.scaleQuantile().domain(compositeValues).range(colorArr)
 
-  const colorScale = d3
-    .scaleQuantile()
-    .domain(compositeValues)
-    .range(['#f1f5f9', '#cbd5e1', '#64748b', '#334155', '#0f172a'])
+  function colorScale(value, scaleValues, colorArray) {
+    const scale = d3.scaleQuantile().domain(scaleValues).range(colorArray)
+    return scale(value)
+  }
 
-  const meancolorScale = d3
-    .scaleQuantile()
-    .domain(meanValues)
-    .range(['#f1f5f9', '#cbd5e1', '#64748b', '#334155', '#0f172a'])
+  // const meancolorScale = d3.scaleQuantile().domain(meanValues).range(colorArr)
 
-  const mediancolorScale = d3
-    .scaleQuantile()
-    .domain(medianValues)
-    .range(['#f1f5f9', '#cbd5e1', '#64748b', '#334155', '#0f172a'])
+  // const mediancolorScale = d3
+  //   .scaleQuantile()
+  //   .domain(medianValues)
+  //   .range(colorArr)
 
-  const compcolorScale = d3
-    .scaleQuantile()
-    .domain(computerValues)
-    .range(['#f1f5f9', '#cbd5e1', '#64748b', '#334155', '#0f172a'])
+  // const compcolorScale = d3
+  //   .scaleQuantile()
+  //   .domain(computerValues)
+  //   .range(colorArr)
 
-  const intercolorScale = d3
-    .scaleQuantile()
-    .domain(internetValues)
-    .range(['#f1f5f9', '#cbd5e1', '#64748b', '#334155', '#0f172a'])
+  // const intercolorScale = d3
+  //   .scaleQuantile()
+  //   .domain(internetValues)
+  //   .range(colorArr)
 
-  const bacolorScale = d3
-    .scaleQuantile()
-    .domain(baValues)
-    .range(['#f1f5f9', '#cbd5e1', '#64748b', '#334155', '#0f172a'])
+  // const bacolorScale = d3.scaleQuantile().domain(baValues).range(colorArr)
 
   // const pcolorScale = d3
   //   .scaleLinear()
@@ -349,7 +406,11 @@
         {#each meanmedian as feature, i}
           <path
             d={path(feature)}
-            fill={meancolorScale(feature.properties.properties.meanValue)}
+            fill={colorScale(
+              feature.properties.properties.meanValue,
+              meanValues,
+              colorArr,
+            )}
             in:fade={{ duration: 400 }}
             out:fade={{ duration: 400 }}
           />
@@ -362,7 +423,11 @@
         {#each meanmedian as feature, i}
           <path
             d={path(feature)}
-            fill={mediancolorScale(feature.properties.properties.medianValue)}
+            fill={colorScale(
+              feature.properties.properties.medianValue,
+              medianValues,
+              colorArr,
+            )}
             in:fade={{ duration: 400 }}
             out:fade={{ duration: 400 }}
           />
@@ -375,7 +440,11 @@
         {#each compinter as feature, i}
           <path
             d={path(feature)}
-            fill={compcolorScale(feature.properties.computerValue)}
+            fill={colorScale(
+              feature.properties.computerValue,
+              computerValues,
+              colorArr,
+            )}
             in:fade={{ duration: 400 }}
             out:fade={{ duration: 400 }}
           />
@@ -388,7 +457,11 @@
         {#each compinter as feature, i}
           <path
             d={path(feature)}
-            fill={intercolorScale(feature.properties.internetValue)}
+            fill={colorScale(
+              feature.properties.internetValue,
+              internetValues,
+              colorArr,
+            )}
             in:fade={{ duration: 400 }}
             out:fade={{ duration: 400 }}
           />
@@ -401,7 +474,7 @@
         {#each ba as feature, i}
           <path
             d={path(feature)}
-            fill={bacolorScale(feature.properties.BAplusnum)}
+            fill={colorScale(feature.properties.BAplusnum, baValues, colorArr)}
             in:fade={{ duration: 400 }}
             out:fade={{ duration: 400 }}
           />
@@ -414,7 +487,11 @@
         {#each comp as feature, i}
           <path
             d={path(feature)}
-            fill={colorScale(feature.properties.properties.compositeValue || 0)}
+            fill={colorScale(
+              feature.properties.properties.compositeValue || 0,
+              compositeValues,
+              colorArr,
+            )}
             in:fade={{ duration: 400 }}
             out:fade={{ duration: 400 }}
           />
